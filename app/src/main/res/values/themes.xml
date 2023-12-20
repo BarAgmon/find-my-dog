@@ -5,5 +5,5 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.Lecture4Demo3" parent="Base.Theme.Lecture4Demo3" />
+    <style name="FindMyDog" parent="Base.Theme.Lecture4Demo3" />
 </resources>
