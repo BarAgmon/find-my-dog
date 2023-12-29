@@ -1,47 +1,38 @@
 package com.idz.lecture4_demo3
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
-import android.content.res.Configuration
-import android.widget.ImageView
+import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
+import androidx.navigation.NavHost
+import androidx.navigation.ui.NavigationUI.onNavDestinationSelected
+import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 
 class MainActivity : AppCompatActivity() {
-
+    var navCtrl: NavController? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        val navHost = supportFragmentManager.findFragmentById(R.id.mainNavHost) as NavHost?
+        navCtrl = navHost!!.navController
+        setupActionBarWithNavController(this, navCtrl!!)
 
-//        val addStudentButton = findViewById<Button>(R.id.btnMainAddStudent)
-        val addStudentButton: Button = findViewById(R.id.btnMainAddStudent)
-        val findMyDogIconId: ImageView = findViewById(R.id.findMyDogIcon)
-        val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        val isDarkMode = nightModeFlags == Configuration.UI_MODE_NIGHT_YES
-        val imageResourceId = if (isDarkMode) R.drawable.find_my_dog_dm else R.drawable.find_my_dog
-        findMyDogIconId.setImageResource(imageResourceId)
-        // Option 1
-//        class ButtonOnClickListener : View.OnClickListener {
-//            override fun onClick(v: View?) {
-//
-//                val intent = Intent(this@MainActivity, AddStudentActivity::class.java)
+        //if (Model.instance().isSignedIn()) {
+//        if (true) {
+//                navCtrl.navigate(R.id.action_loginFragment_to_moviesFragment2);
 //            }
-//
 //        }
-
-//        val listener = ButtonOnClickListener()
-//        addStudentButton.setOnClickListener(ButtonOnClickListener()) //(listener)
-
-//        addStudentButton.setOnClickListener {
-//
-//        }
-
-        addStudentButton.setOnClickListener(::onAddStudentButtonClicked)
     }
 
-    fun onAddStudentButtonClicked(view: View) {
-        val intent = Intent(this, AddStudentActivity::class.java)
-        startActivity(intent)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (!super.onOptionsItemSelected(item)) {
+            when (item.itemId) {
+                android.R.id.home -> navCtrl!!.navigateUp()
+                else -> onNavDestinationSelected(item, navCtrl!!)
+            }
+        } else {
+            return true
+        }
+        return false
     }
 }
