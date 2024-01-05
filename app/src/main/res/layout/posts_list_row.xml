@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/post_layout"
+    android:id="@+id/post_details_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp">
@@ -21,6 +21,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:strokeColor="@color/stroke_color"
+        android:transitionName="@{@string/post_card_transition_name(post.id)}"
         app:strokeWidth="2dp">
 
         <com.google.android.flexbox.FlexboxLayout
@@ -60,8 +61,7 @@
                     android:layout_marginStart="2dp"
                     android:layout_marginEnd="2dp"
                     app:cardBackgroundColor="#F4F1F1"
-                    app:cardCornerRadius="100dp">
-
+                    app:cardCornerRadius="150dp">
                     <ImageView
                         android:id="@+id/dog_post_publisher_img"
                         android:layout_width="match_parent"
