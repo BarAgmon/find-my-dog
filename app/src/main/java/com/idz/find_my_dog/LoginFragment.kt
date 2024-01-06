@@ -45,8 +45,8 @@ class LoginFragment : Fragment() {
 
             model.login(emailString, passwordString, context, object : ModelFirebase.LoginCallback {
                 override fun onSuccess(user: FirebaseUser?) {
-//                Navigation.findNavController(view).
-//                navigate(R.id.action_loginFragment_to_postsFragment)
+                    Navigation.findNavController(view).
+                    navigate(R.id.action_loginFragment_to_postsFragment)
                 }
             })
         })

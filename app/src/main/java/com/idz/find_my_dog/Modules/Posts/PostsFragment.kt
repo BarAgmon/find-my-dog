@@ -1,6 +1,7 @@
 package com.idz.find_my_dog.Modules.Posts
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,11 +33,17 @@ class PostsFragment : Fragment() {
         val adapter = PostRvAdapter(posts)
         adapter.listener = object : PostsListActivity.OnPostClickListener {
 
-            override fun onPostClicked (clickedPost: Post?) {
+            override fun onItemClick(position: Int) {
+                Log.i("TAG", "StudentsRecyclerAdapter: Position clicked $position")
+                val clickedPost = posts?.get(position)
                 clickedPost?.let {
                     val action = PostsFragmentDirections.actionPostsFragmentToPostDetailsFragment(it.title)
                     Navigation.findNavController(view).navigate(action)
                 }
+            }
+
+            override fun onPostClicked(clickedPost: Post?) {
+                Log.i("TAG", "STUDENT $clickedPost")
             }
         }
 

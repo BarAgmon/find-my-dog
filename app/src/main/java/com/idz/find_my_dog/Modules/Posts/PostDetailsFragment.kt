@@ -14,5 +14,7 @@ import com.idz.find_my_dog.Modules.Posts.Adapter.PostRvAdapter
 import com.idz.find_my_dog.R
 
 class PostDetailsFragment : Fragment(R.layout.fragment_post_details) {
-
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
 }

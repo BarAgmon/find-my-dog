@@ -32,12 +32,13 @@ class PostViewHolder(val post: View,
         dogPostLocation = itemView.findViewById(R.id.dog_post_location)
         dogPostPublishDate = itemView.findViewById(R.id.dog_post_publish_date)
 
-//        post.setOnClickListener {
-//            Log.i("TAG", "StudentViewHolder: Position clicked $adapterPosition")
-//            //listener?.onItemClick(adapterPosition)
-//            val clickedPost = posts?.get(adapterPosition)
-//            listener?.onPostClicked(clickedPost)
-//        }
+        post.setOnClickListener {
+            Log.i("TAG", "StudentViewHolder: Position clicked $adapterPosition")
+            //listener?.onItemClick(adapterPosition)
+            val clickedPost = posts?.get(adapterPosition)
+            listener?.onItemClick(adapterPosition)
+            listener?.onPostClicked(clickedPost)
+        }
     }
 
 }
