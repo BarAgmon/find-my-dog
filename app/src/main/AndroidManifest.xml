@@ -13,9 +13,6 @@
         android:theme="@style/Theme.Lecture4Demo3"
         tools:targetApi="31">
         <activity
-            android:name=".AddStudentActivity"
-            android:exported="false" />
-        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
