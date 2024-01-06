@@ -15,8 +15,8 @@ import com.idz.find_my_dog.Models.Post
 import com.idz.find_my_dog.R
 
 class PostsListActivity : AppCompatActivity(){
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.posts_list)
 
         val postsListRv = findViewById<RecyclerView>(R.id.posts_list_rv)

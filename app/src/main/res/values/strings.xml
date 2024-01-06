@@ -15,4 +15,5 @@
     <string name="login_failed">"Login failed"</string>
     <string name="dog_image">Dog Image</string>
     <string name="publisher_img">publisher_img</string>
+    <string name="dot">●</string>
 </resources>
