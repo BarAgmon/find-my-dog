@@ -1,5 +1,4 @@
 package com.idz.find_my_dog
-
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
