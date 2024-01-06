@@ -22,19 +22,19 @@ class AddStudentActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        nameTextField = findViewById(R.id.etAddStudentName)
-        idTextField = findViewById(R.id.etAddStudentID)
-        messageTextView = findViewById(R.id.tvAddStudentSaved)
-        saveButton = findViewById(R.id.btnAddStudentSave)
-        cancelButton = findViewById(R.id.btnAddStudentCancel)
-
-        cancelButton?.setOnClickListener {
-            finish()
-        }
-
-        saveButton?.setOnClickListener {
-            val name = nameTextField?.text.toString()
-            messageTextView?.text = name
-        }
-    }
+//        nameTextField = findViewById(R.id.etAddStudentName)
+//        idTextField = findViewById(R.id.etAddStudentID)
+//        messageTextView = findViewById(R.id.tvAddStudentSaved)
+//        saveButton = findViewById(R.id.btnAddStudentSave)
+//        cancelButton = findViewById(R.id.btnAddStudentCancel)
+//
+//        cancelButton?.setOnClickListener {
+//            finish()
+//        }
+//
+//        saveButton?.setOnClickListener {
+//            val name = nameTextField?.text.toString()
+//            messageTextView?.text = name
+//        }
+   }
 }
