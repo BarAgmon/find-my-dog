@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.idz.lecture4_demo3'
+    namespace 'com.idz.find_my_dog'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.idz.lecture4_demo3"
+        applicationId "com.idz.find_my_dog"
         minSdk 25
         targetSdk 33
         versionCode 1

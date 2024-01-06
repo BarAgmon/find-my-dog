@@ -1,4 +1,4 @@
-package com.idz.lecture4_demo3
+package com.idz.find_my_dog
 
 import android.graphics.Bitmap
 import android.net.Uri

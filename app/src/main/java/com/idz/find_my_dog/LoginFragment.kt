@@ -1,4 +1,4 @@
-package com.idz.lecture4_demo3
+package com.idz.find_my_dog
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -33,6 +33,7 @@ class LoginFragment : Fragment() {
             if (!CredValidation.isLoginCredValid(context, emailString, passwordString)){
                 return@OnClickListener
             }
+
         })
 
         return view
