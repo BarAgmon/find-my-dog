@@ -16,6 +16,10 @@ import com.idz.find_my_dog.Modules.Posts.Adapter.PostRvAdapter
 import com.idz.find_my_dog.R
 
 class PostsListActivity : AppCompatActivity(){
+
+    /*
+    Creates a posts list on screen.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_posts_list)
@@ -31,8 +35,7 @@ class PostsListActivity : AppCompatActivity(){
         postsListRv.adapter = PostRvAdapter(posts)
     }
     interface OnPostClickListener {
-        //fun onItemClick(position: Int) // post
-        fun onPostClicked(post: Post?)
+        fun onPostClicked(clickedPost: Post?)
     }
 
 }

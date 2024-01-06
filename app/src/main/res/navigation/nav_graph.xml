@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/loginFragment">
-
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.idz.find_my_dog.LoginFragment"
@@ -23,5 +22,22 @@
             android:id="@+id/action_registrationFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
     </fragment>
-
+    <fragment
+        android:id="@+id/postsFragment"
+        android:name="com.idz.find_my_dog.Modules.Posts.PostsFragment"
+        android:label="PostsFragment"
+        tools:layout="@layout/fragment_posts_list">
+        <action
+            android:id="@+id/action_postsFragment_to_postDetailsFragment"
+            app:destination="@id/postDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/postDetailsFragment"
+        android:name="com.idz.find_my_dog.Modules.Posts.PostDetailsFragment"
+        android:label="PostDetailsFragment"
+        tools:layout="@layout/fragment_post_details">
+        <argument
+            android:name="title"
+            app:argType="string" />
+    </fragment>
 </navigation>
