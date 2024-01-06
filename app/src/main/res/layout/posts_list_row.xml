@@ -2,15 +2,18 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/post_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".AddStudentActivity">
+    android:layout_height="match_parent">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card"
-        android:layout_width="268dp"
-        android:layout_height="240dp"
-        android:layout_margin="8dp"
+        android:layout_width="398dp"
+        android:layout_height="235dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
         app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,6 +25,7 @@
         app:strokeWidth="1dp">
 
         <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/dog_post_location"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:alignItems="center"
@@ -35,28 +39,39 @@
                 android:layout_height="100dp"
                 android:layout_marginStart="7dp"
                 android:layout_marginTop="7dp"
-                android:layout_marginBottom="7dp"
                 android:layout_marginEnd="7dp"
+                android:layout_marginBottom="7dp"
                 android:background="#FFFFFF"
                 android:contentDescription="@string/dog_image"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/dog_exmp" />
+                android:scaleType="fitCenter" />
+
             <com.google.android.flexbox.FlexboxLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginStart="3dp"
+                android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="5dp"
                 app:flexDirection="row"
                 app:flexWrap="nowrap"
                 app:justifyContent="space_between">
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:scaleType="centerCrop"
-                    tools:srcCompat="@tools:sample/avatars" />
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"
+                    app:cardBackgroundColor="#F4F1F1"
+                    app:cardCornerRadius="100dp">
+
+                    <ImageView
+                        android:id="@+id/dog_post_publisher_img"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="@string/publisher_img"
+                        android:scaleType="centerCrop" />
+                </androidx.cardview.widget.CardView>
+
+
                 <com.google.android.flexbox.FlexboxLayout
+                    android:id="@+id/dog_"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginStart="3dp"
@@ -64,21 +79,29 @@
                     app:flexDirection="column"
                     app:flexWrap="nowrap"
                     app:justifyContent="space_between">
+
                     <TextView
+                        android:id="@+id/dog_post_publisher_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        android:fontFamily="@font/josefin_sans_semibold"
-                        android:maxLines="2"
-                        android:text="Location: blabla" />
+                        android:fontFamily="@font/josefin_sans_bold"
+                        android:maxLines="2" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:fontFamily="@font/josefin_sans_semibold"
-                        android:maxLines="2"
-                        android:text="Date: 20.20.20" />
+                        android:maxLines="2" />
+
+                    <TextView
+                        android:id="@+id/dog_post_publish_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/josefin_sans_semibold"
+                        android:maxLines="2" />
                 </com.google.android.flexbox.FlexboxLayout>
             </com.google.android.flexbox.FlexboxLayout>
         </com.google.android.flexbox.FlexboxLayout>

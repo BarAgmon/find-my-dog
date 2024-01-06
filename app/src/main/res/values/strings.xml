@@ -3,11 +3,8 @@
     <string name="add_student">ADD STUDENT</string>
     <string name="icon_image">icon image</string>
     <string name="find_my_dog">Find My Dog</string>
-<<<<<<< HEAD
-    <string name="login_header">Welcome Back!</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="login_header">Welcome Back!</string>>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in or register</string>
@@ -16,7 +13,6 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
-=======
     <string name="dog_image">Dog Image</string>
->>>>>>> 5ba2cbc (added flexbox, started to make a card)
+    <string name="publisher_img">publisher_img</string>
 </resources>

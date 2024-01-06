@@ -1,11 +1,16 @@
 package com.idz.find_my_dog
+import android.content.Intent
 import android.os.Bundle
+
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavHost
 import androidx.navigation.ui.NavigationUI.onNavDestinationSelected
 import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
+import com.idz.find_my_dog.Modules.Posts.PostsListActivity
+
 
 class MainActivity : AppCompatActivity() {
     var navCtrl: NavController? = null
@@ -30,3 +35,4 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 }
+
