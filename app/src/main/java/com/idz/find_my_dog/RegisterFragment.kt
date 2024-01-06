@@ -14,6 +14,9 @@ import android.widget.ImageView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.Navigation
+import com.google.firebase.auth.FirebaseUser
+import com.idz.find_my_dog.Model.ModelFirebase
+import com.idz.lecture4_demo3.Model.Model
 import java.util.Locale
 
 class RegisterFragment : Fragment() {
@@ -28,6 +31,7 @@ class RegisterFragment : Fragment() {
     var confirmPassword: EditText? = null
     var setImg = false
     var userImageUri: Uri? = null
+    var model: Model = Model.instance
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,7 +68,11 @@ class RegisterFragment : Fragment() {
                 Utils.showToast(context, "You have to set an image")
                 return@OnClickListener
             }
-            Navigation.findNavController(view).popBackStack()
+
+            model.register(emailString, passwordString, context, object : ModelFirebase.RegisterCallback {
+                override fun onSuccess() {
+                    Navigation.findNavController(view).popBackStack()                }
+            })
         })
 
         cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { result: Bitmap? ->
