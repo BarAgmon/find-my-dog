@@ -49,6 +49,9 @@
         <action
             android:id="@+id/action_postsFragment_to_searchFragment"
             app:destination="@id/searchFragment"/>
+        <action
+            android:id="@+id/action_postsFragment_to_newPostDialogFragment"
+            app:destination="@id/newPostDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/postDetailsFragment"
@@ -58,4 +61,9 @@
             android:name="title"
             app:argType="string" />
     </fragment>
+    <dialog
+        android:id="@+id/newPostDialogFragment"
+        android:name="com.idz.find_my_dog.Modules.Posts.NewPostDialogFragment"
+        tools:layout="@layout/fragment_add_new_post"
+        android:label="New Post" />
 </navigation>
