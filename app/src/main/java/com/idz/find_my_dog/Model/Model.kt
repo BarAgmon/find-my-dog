@@ -2,8 +2,11 @@ package com.idz.lecture4_demo3.Model
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.widget.ImageView
 import androidx.lifecycle.MutableLiveData
 import com.idz.find_my_dog.Model.ModelFirebase
+import java.io.ByteArrayOutputStream
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
@@ -29,9 +32,11 @@ class Model private constructor() {
         loading,
         loaded
     }
-    fun register(email: String, password: String, context: Context,
+    fun register(email: String, password: String, firstName: String, lastName: String,
+                 userImg: ImageView?, context: Context,
                  callback: ModelFirebase.RegisterCallback) {
-        modelFirebase.register(email, password, context, callback)
+        modelFirebase.register(email, password, firstName, lastName,
+            userImg, avatarLocation, context, callback)
     }
 
     fun login(email: String, password: String, context: Context,

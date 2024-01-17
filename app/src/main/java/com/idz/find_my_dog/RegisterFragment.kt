@@ -1,6 +1,7 @@
 package com.idz.find_my_dog
 
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -17,6 +18,7 @@ import androidx.navigation.Navigation
 import com.google.firebase.auth.FirebaseUser
 import com.idz.find_my_dog.Model.ModelFirebase
 import com.idz.lecture4_demo3.Model.Model
+import java.io.ByteArrayOutputStream
 import java.util.Locale
 
 class RegisterFragment : Fragment() {
@@ -27,6 +29,8 @@ class RegisterFragment : Fragment() {
     var userImg: ImageView? = null
     var signUp: Button? = null
     var email: EditText? = null
+    var firstName: EditText? = null
+    var lastName: EditText? = null
     var password: EditText? = null
     var confirmPassword: EditText? = null
     var setImg = false
@@ -47,6 +51,8 @@ class RegisterFragment : Fragment() {
         password = view.findViewById(R.id.password_txt)
         confirmPassword = view.findViewById(R.id.confirmpassword_txt)
         userImg = view.findViewById(R.id.user_img)
+        firstName = view.findViewById(R.id.firstname_txt)
+        lastName = view.findViewById(R.id.lastname_txt)
 
         signIn?.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_registrationFragment_to_loginFragment))
 
@@ -68,9 +74,13 @@ class RegisterFragment : Fragment() {
                 Utils.showToast(context, "You have to set an image")
                 return@OnClickListener
             }
+            val firstName = firstName?.text.toString()
+            val lastName = lastName?.text.toString()
 
-            model.register(emailString, passwordString, context, object : ModelFirebase.RegisterCallback {
+            model.register(emailString, passwordString, firstName, lastName, userImg,
+                context, object : ModelFirebase.RegisterCallback {
                 override fun onSuccess() {
+                    Utils.showToast(context, "Successfully signed up")
                     Navigation.findNavController(view).popBackStack()                }
             })
         })
