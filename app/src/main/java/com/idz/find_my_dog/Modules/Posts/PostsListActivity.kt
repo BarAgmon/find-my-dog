@@ -5,12 +5,15 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.idz.find_my_dog.Models.Model
+import com.idz.find_my_dog.Model.Model
+
 import com.idz.find_my_dog.Model.Post
 import com.idz.find_my_dog.Modules.Posts.Adapter.PostRvAdapter
 import com.idz.find_my_dog.R
 
 class PostsListActivity : AppCompatActivity(){
+    var posts: List<Post>? = null
+    var model: Model = Model.instance
 
     /*
     Creates a posts list on screen.
@@ -25,7 +28,9 @@ class PostsListActivity : AppCompatActivity(){
         val layoutManager = LinearLayoutManager(this)
         postsListRv.layoutManager = layoutManager
 
-        val posts = Model.instance.posts
+        model.getAllPosts {
+            this.posts = it
+        }
 
         val adapter = PostRvAdapter(posts)
         adapter.listener = object : OnPostClickListener {

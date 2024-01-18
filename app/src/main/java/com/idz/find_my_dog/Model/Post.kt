@@ -4,7 +4,7 @@ import androidx.room.PrimaryKey
 import java.util.Date
 
 @Entity
-data class Post (@PrimaryKey val id: String,
+data class Post (@PrimaryKey val id: String = "",
                  val imageURL: String,
                  val title: String,
                  val publisher: User,
@@ -12,10 +12,15 @@ data class Post (@PrimaryKey val id: String,
                  val location: String,
                  val description: String)
 {
-
+    constructor(imageURL: String,
+                title: String,
+                publisher: User,
+                date: String,
+                location: String,
+                description: String) : this("",imageURL,title,publisher,date,location,description)
     companion object {
-        const val ID = "id"
-        const val IMAGE_URL = "imageUrl"
+        const val ID = "DocumentSnapshot"
+        const val IMAGE_URL = "imageURL"
         const val TITLE = "title"
         const val PUBLISHER = "publisher"
         const val DATE = "date"
@@ -33,5 +38,16 @@ data class Post (@PrimaryKey val id: String,
             return Post(id,imageURL,title,publisher,date,location,description)
         }
     }
-
+    val json: Map<String, Any>
+        get() {
+            return hashMapOf(
+                ID to id,
+                IMAGE_URL to imageURL,
+                TITLE to title,
+                PUBLISHER to publisher,
+                DATE to date,
+                LOCATION to location,
+                DESCRIPTION to description
+            )
+        }
 }

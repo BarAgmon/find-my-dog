@@ -19,7 +19,7 @@
     class PostsFragment : Fragment() {
 
         var postsListRv: RecyclerView? = null
-        var posts: MutableList<Post>? = null
+        var posts: List<Post>? = null
         var newPostButton : FloatingActionButton?  = null
         var model: Model = Model.instance
         override fun onCreateView(
@@ -29,8 +29,8 @@
             // Inflate the layout for this fragment
             val view = inflater.inflate(R.layout.fragment_posts_list, container, false)
             newPostButton = view?.findViewById(R.id.add_new_post)
-            posts = model.getAllPosts {
-                return it
+            model.getAllPosts {
+                this.posts = it
             }
             postsListRv = view.findViewById(R.id.posts_list_rv)
             postsListRv?.setHasFixedSize(true)
@@ -39,7 +39,6 @@
             adapter.listener = object : PostsListActivity.OnPostClickListener {
 
                 override fun onItemClick(position: Int) {
-                    Log.i("TAG", "StudentsRecyclerAdapter: Position clicked $position")
                     val clickedPost = posts?.get(position)
                     clickedPost?.let {
                         val action = PostsFragmentDirections.actionPostsFragmentToPostDetailsFragment(it.title)

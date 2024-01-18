@@ -180,5 +180,10 @@ class ModelFirebase {
                 }
             }
         }
+    fun addPost(post: Post, callback: () -> Unit) {
+        db.collection(POSTS_COLLECTION_NAME).add(post.json).addOnSuccessListener {
+            callback()
+        }
     }
+}
 

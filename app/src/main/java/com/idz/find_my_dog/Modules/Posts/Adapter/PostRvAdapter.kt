@@ -7,7 +7,7 @@ import com.idz.find_my_dog.Model.Post
 import com.idz.find_my_dog.Modules.Posts.PostsListActivity
 import com.idz.find_my_dog.R
 
-class PostRvAdapter(private val posts: MutableList<Post>?): RecyclerView.Adapter<PostViewHolder>() {
+class PostRvAdapter(private val posts: List<Post>?): RecyclerView.Adapter<PostViewHolder>() {
     var listener: PostsListActivity.OnPostClickListener? = null
 
     /*
@@ -39,8 +39,8 @@ class PostRvAdapter(private val posts: MutableList<Post>?): RecyclerView.Adapter
         val post = posts?.get(position)
         holder.dogPostLocation?.text = post?.location
         holder.dogPostPublishDate?.text = post?.date.toString()
-        holder.dogPostPublisherName?.text = post?.publisher?.name
-//        holder.dogPostImage
+        holder.dogPostPublisherName?.text = post?.publisher?.firstName
+        //holder.dogPostImage?.setImageURI()
 //        holder.dogPostPublisherImg
 
     }

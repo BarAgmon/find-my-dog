@@ -69,4 +69,8 @@ class Model private constructor() {
     fun getAllPosts(callback: (List<Post>) -> Unit) {
         modelFirebase.getAllPosts(callback)
     }
+
+    fun addPost(post: Post, callback: () -> Unit){
+        modelFirebase.addPost(post,callback)
+    }
 }

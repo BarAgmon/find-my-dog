@@ -16,7 +16,7 @@ used to display the data of a post in a RecyclerView.
  */
 class PostViewHolder(val post: View,
                      val listener: PostsListActivity.OnPostClickListener?,
-                     val posts: MutableList<Post>?) : RecyclerView.ViewHolder(post){
+                     val posts: List<Post>?) : RecyclerView.ViewHolder(post){
     /*
     Properties definition
      */
