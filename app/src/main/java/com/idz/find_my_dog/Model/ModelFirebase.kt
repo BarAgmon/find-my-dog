@@ -1,18 +1,28 @@
 package com.idz.find_my_dog.Model
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
+import android.widget.ImageView
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.firestoreSettings
 import com.google.firebase.firestore.memoryCacheSettings
 import com.google.firebase.firestore.persistentCacheSettings
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.storage
 import com.idz.find_my_dog.Utils
+import com.idz.lecture4_demo3.Model.User
+import java.io.ByteArrayOutputStream
 
 
 class ModelFirebase {
@@ -36,13 +46,68 @@ class ModelFirebase {
         fun onSuccess(user: FirebaseUser?)
     }
 
-    fun register(email: String, password: String, context: Context, callback: RegisterCallback) {
+    interface UserDetailsCallback {
+        fun onSuccess(userDetails: User?)
+    }
+
+    interface SetUserDetailsCallback {
+        fun onSuccess()
+        fun onFailure()
+    }
+
+    interface UploadImageCallback {
+        fun onSuccess(downloadUrl: String)
+    }
+
+
+    fun setUserDetails(email: String, firstName: String, lastName: String, imageUrl: String,
+                       callback: SetUserDetailsCallback){
+        val jsonReview: MutableMap<String, Any> = HashMap()
+        jsonReview["firstName"] = firstName
+        jsonReview["lastName"] = lastName
+        if (imageUrl != "") {
+            jsonReview["imageUrl"] = imageUrl
+        }
+
+        db.collection(User.COLLECTION_NAME)
+            .document(email)
+            .set(jsonReview)
+            .addOnSuccessListener {
+                success -> callback.onSuccess()
+            }.addOnFailureListener{
+                callback.onFailure()
+            }
+    }
+
+    fun uploadImage(email: String, userImg: ImageView?, imageLocation: String,
+                    context: Context, callback: UploadImageCallback) {
+
+        val bitmap = (userImg?.drawable as BitmapDrawable).bitmap
+        val baos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        val data = baos.toByteArray()
+        val storageRef: StorageReference = storage.reference
+        val imgRef: StorageReference = storageRef.child(imageLocation + email)
+        val uploadTask: UploadTask = imgRef.putBytes(data)
+
+        uploadTask.addOnFailureListener {
+            Utils.showToast(context, "Failed to upload image")
+        }.addOnSuccessListener() { taskSnapshot ->
+            imgRef.downloadUrl.addOnSuccessListener { uri: Uri ->
+                val downloadUrl = uri.toString()
+                callback.onSuccess(downloadUrl)
+            }
+        }
+    }
+
+    fun register(email: String, password: String, context: Context,
+                 callback: ModelFirebase.RegisterCallback) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Utils.showToast(context, "successfully signed up")
                     callback.onSuccess()
-                } else if (task.exception is com.google.firebase.auth.FirebaseAuthUserCollisionException) {
+                } else if (
+                    task.exception is com.google.firebase.auth.FirebaseAuthUserCollisionException) {
                     Utils.showToast(context, "User with this email already exists")
                 } else {
                     Utils.showToast(context, "sign up failed")
@@ -61,6 +126,38 @@ class ModelFirebase {
                 }
             }
     }
+
+    fun getLoggedInUserEmail(): String? {
+        return auth.currentUser!!.email
+    }
+    fun getUserDetails(callback: UserDetailsCallback) {
+        val email = getLoggedInUserEmail()
+        if (email != null) {
+            db.collection(User.COLLECTION_NAME)
+                .document(email)
+                .get()
+                .addOnCompleteListener { task ->
+                    var user = User()
+                    if (task.isSuccessful) {
+                        val document: DocumentSnapshot = task.result
+                        user = document.data?.let { User.fromJSON(it, document.id) }!!
+                    }
+                    callback.onSuccess(user)
+                }
+        }
+    }
+
+    fun updatePassword(password: String, context: Context) {
+        auth.currentUser?.updatePassword(password)
+            ?.addOnCompleteListener(OnCompleteListener<Void?> { task ->
+                if (task.isSuccessful) {
+                    Utils.showToast(context, "User password updated successfully")
+                } else {
+                    Utils.showToast(context, "Update password failed: " + task.exception)
+                }
+            })
+    }
+
     fun logout() {
         auth.signOut()
     }
