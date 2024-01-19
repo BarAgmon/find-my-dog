@@ -32,21 +32,27 @@
         android:id="@+id/userDetailsFragment"
         android:name="com.idz.find_my_dog.UserDetailsFragment"
         android:label="Profile"
-        tools:layout="@layout/fragment_user_details">
-    </fragment>
+        tools:layout="@layout/fragment_user_details"/>
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.idz.find_my_dog.Modules.Posts.SearchFragment"
+        android:label="Search"
+        tools:layout="@layout/search_component" />
     <fragment
         android:id="@+id/postsFragment"
         android:name="com.idz.find_my_dog.Modules.Posts.PostsFragment"
-        android:label="PostsFragment"
+        android:label="Explore posts"
         tools:layout="@layout/fragment_posts_list">
         <action
             android:id="@+id/action_postsFragment_to_postDetailsFragment"
             app:destination="@id/postDetailsFragment" />
+        <action
+            android:id="@+id/action_postsFragment_to_searchFragment"
+            app:destination="@id/searchFragment"/>
     </fragment>
     <fragment
         android:id="@+id/postDetailsFragment"
         android:name="com.idz.find_my_dog.Modules.Posts.PostDetailsFragment"
-        android:label="PostDetailsFragment"
         tools:layout="@layout/fragment_post_details">
         <argument
             android:name="title"
