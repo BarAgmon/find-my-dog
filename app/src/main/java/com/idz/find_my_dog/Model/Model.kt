@@ -8,17 +8,13 @@ import java.util.concurrent.Executors
 
 class Model private constructor() {
     var executor: Executor = Executors.newFixedThreadPool(1)
-    var modelFirebase: ModelFirebase
+    private var modelFirebase: ModelFirebase = ModelFirebase()
     private val avatarLocation = "users_avatars/"
-    private val movieLocation = "users_movies/"
-    var loadingState = MutableLiveData<LoadingState>()
+    private var loadingState = MutableLiveData<LoadingState>()
     companion object {
         val instance: Model = Model()
     }
     init {
-//        reviewList = MutableLiveData<List<Review?>?>()
-//        myReviews = MutableLiveData<List<Review?>?>()
-        modelFirebase = ModelFirebase()
         loadingState.value = LoadingState.loaded
     }
 
@@ -73,4 +69,5 @@ class Model private constructor() {
     fun addPost(post: Post, callback: () -> Unit){
         modelFirebase.addPost(post,callback)
     }
+
 }

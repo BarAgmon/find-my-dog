@@ -6,9 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.DialogFragment
+import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.idz.find_my_dog.Model.Model
+import com.idz.find_my_dog.Model.ModelFirebase
 import com.idz.find_my_dog.Model.Post
 import com.idz.find_my_dog.Model.User
 import com.idz.find_my_dog.R
@@ -16,20 +20,30 @@ import com.idz.find_my_dog.Utils
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.Date
+import java.util.Locale
 
 class NewPostDialogFragment : DialogFragment() {
     private var model: Model = Model.instance
-    private var title: TextInputLayout? = null
-    private var details: TextInputLayout? = null
-    private var image: ImageView? = null
-    private var sendPostButton : ImageView? = null
-    private var cancelButton : ImageView? = null
+    private var title: TextInputEditText? = null
+    private var details: TextInputEditText? = null
+    private lateinit var image: ImageView
+    private lateinit var sendPostButton : ImageView
+    private lateinit var cancelButton : ImageView
+    private lateinit var loggedInUser: User
+    private val galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        val galleryUri = it
+        try {
+            image.setImageURI(galleryUri)
+        } catch(e: Exception) {
+            e.printStackTrace()
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_add_new_post, container, false)
-
+        setupUI(view)
         return view
     }
 
@@ -39,24 +53,34 @@ class NewPostDialogFragment : DialogFragment() {
         this.title = view.findViewById(R.id.new_post_title)
         this.details = view.findViewById(R.id.new_post_details)
         this.image = view.findViewById(R.id.new_post_img)
+        model.getUserDetails(object : ModelFirebase.UserDetailsCallback {
+
+            override fun onSuccess(userDetails: User) {
+                loggedInUser = userDetails
+            }
+        })
+        image.setOnClickListener{
+            val imageMimeType = "image/*"
+            galleryLauncher.launch(imageMimeType)
+        }
         cancelButton.setOnClickListener {
             dismiss()
         }
         sendPostButton.setOnClickListener {
-            //TODO - fix this to take real params include image
-            val postTitle = title?.getEditText()?.getText().toString()
-            val postDetails = details?.getEditText()?.getText().toString()
-            var user = User("213455","bar","agmon","")
-            var post = Post("",postTitle,user,
-                getCurrentDateTime(),"",postDetails)
+            //TODO - fix this to take real params include image, add on success function, the dismiss killing session
+            val postTitle = title?.text.toString()
+            val postDetails = details?.text.toString()
+
+            var post = Post("",postTitle,loggedInUser, getCurrentDateTime(),"",postDetails,loggedInUser.email)
                 model.addPost(post){
-                    Utils.showToast(context, "Posted successfully")
+                    Utils.showToast(requireContext(), "Posted successfully")
                 }
+            dismiss()
         }
     }
 
     private fun getCurrentDateTime(): String {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ROOT)
         return dateFormat.format(Date())
     }
     override fun onStart() {

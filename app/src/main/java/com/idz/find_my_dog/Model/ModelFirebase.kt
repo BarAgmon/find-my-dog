@@ -50,7 +50,7 @@ class ModelFirebase {
         fun onSuccess(user: FirebaseUser?)
     }
     interface UserDetailsCallback {
-        fun onSuccess(userDetails: User?)
+        fun onSuccess(userDetails: User)
     }
 
     interface SetUserDetailsCallback {
@@ -184,6 +184,52 @@ class ModelFirebase {
         db.collection(POSTS_COLLECTION_NAME).add(post.json).addOnSuccessListener {
             callback()
         }
+    }
+
+    fun getPost(callback: (List<Post>) -> Unit, postId: String){
+        val currUserEmail = auth.currentUser!!.email
+        db.collection(POSTS_COLLECTION_NAME).whereEqualTo(Post.ID, postId)
+            .get().addOnCompleteListener {
+                when (it.isSuccessful) {
+                    true -> {
+                        val posts: MutableList<Post> = mutableListOf()
+                        for (json in it.result) {
+                            val post = Post.fromJSON(json.data)
+                            posts.add(post)
+                        }
+                        callback(posts)
+                    }
+                    false -> callback(listOf())
+                }
+            }
+    }
+    fun getMyPosts(callback: (List<Post>) -> Unit){
+        val currUserEmail = auth.currentUser!!.email
+        db.collection(POSTS_COLLECTION_NAME).whereEqualTo(Post.PUBLISHER_EMAIL_ID, currUserEmail)
+            .get().addOnCompleteListener {
+            when (it.isSuccessful) {
+                true -> {
+                    val posts: MutableList<Post> = mutableListOf()
+                    for (json in it.result) {
+                        val post = Post.fromJSON(json.data)
+                        posts.add(post)
+                    }
+                    callback(posts)
+                }
+                false -> callback(listOf())
+            }
+        }
+    }
+
+    fun setPost(newPost : Post, callback: SetUserDetailsCallback){
+        db.collection(POSTS_COLLECTION_NAME)
+            .document(newPost.id)
+            .set(newPost.json)
+            .addOnSuccessListener {
+                    success -> callback.onSuccess()
+            }.addOnFailureListener{
+                callback.onFailure()
+            }
     }
 }
 
