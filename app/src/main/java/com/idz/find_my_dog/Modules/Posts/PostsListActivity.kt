@@ -1,19 +1,12 @@
 package com.idz.find_my_dog.Modules.Posts
 
 import android.os.Bundle
-import android.provider.Settings.Global.getString
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.idz.find_my_dog.Models.Model
-import com.idz.find_my_dog.Models.Post
+import com.idz.find_my_dog.Model.Post
 import com.idz.find_my_dog.Modules.Posts.Adapter.PostRvAdapter
 import com.idz.find_my_dog.R
 

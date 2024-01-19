@@ -6,15 +6,13 @@
     import android.view.View
     import android.view.ViewGroup
     import android.widget.AutoCompleteTextView
-    import android.widget.Button
     import androidx.fragment.app.Fragment
     import androidx.navigation.Navigation
-    import androidx.navigation.fragment.findNavController
     import androidx.recyclerview.widget.LinearLayoutManager
     import androidx.recyclerview.widget.RecyclerView
     import com.google.android.material.floatingactionbutton.FloatingActionButton
-    import com.idz.find_my_dog.Models.Model
-    import com.idz.find_my_dog.Models.Post
+    import com.idz.find_my_dog.Model.Model
+    import com.idz.find_my_dog.Model.Post
     import com.idz.find_my_dog.Modules.Posts.Adapter.PostRvAdapter
     import com.idz.find_my_dog.R
 
@@ -23,6 +21,7 @@
         var postsListRv: RecyclerView? = null
         var posts: MutableList<Post>? = null
         var newPostButton : FloatingActionButton?  = null
+        var model: Model = Model.instance
         override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
@@ -30,7 +29,9 @@
             // Inflate the layout for this fragment
             val view = inflater.inflate(R.layout.fragment_posts_list, container, false)
             newPostButton = view?.findViewById(R.id.add_new_post)
-            posts = Model.instance.posts
+            posts = model.getAllPosts {
+                return it
+            }
             postsListRv = view.findViewById(R.id.posts_list_rv)
             postsListRv?.setHasFixedSize(true)
             postsListRv?.layoutManager = LinearLayoutManager(context)

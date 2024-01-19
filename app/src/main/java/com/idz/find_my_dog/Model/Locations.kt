@@ -1,4 +1,4 @@
-package com.idz.find_my_dog.Models
+package com.idz.find_my_dog.Model
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject

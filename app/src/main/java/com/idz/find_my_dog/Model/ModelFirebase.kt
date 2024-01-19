@@ -21,7 +21,6 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.storage
 import com.idz.find_my_dog.Utils
-import com.idz.lecture4_demo3.Model.User
 import java.io.ByteArrayOutputStream
 
 
@@ -29,6 +28,11 @@ class ModelFirebase {
     private var db: FirebaseFirestore = Firebase.firestore
     private var auth: FirebaseAuth = Firebase.auth
     private var storage: FirebaseStorage = Firebase.storage
+
+    companion object{
+        const val POSTS_COLLECTION_NAME = "posts"
+        const val USERS_COLLECTION_NAME = "users"
+    }
 
     init {
         val settings = firestoreSettings {
@@ -45,7 +49,6 @@ class ModelFirebase {
     interface LoginCallback {
         fun onSuccess(user: FirebaseUser?)
     }
-
     interface UserDetailsCallback {
         fun onSuccess(userDetails: User?)
     }
@@ -69,7 +72,7 @@ class ModelFirebase {
             jsonReview["imageUrl"] = imageUrl
         }
 
-        db.collection(User.COLLECTION_NAME)
+        db.collection(USERS_COLLECTION_NAME)
             .document(email)
             .set(jsonReview)
             .addOnSuccessListener {
@@ -110,7 +113,7 @@ class ModelFirebase {
                     task.exception is com.google.firebase.auth.FirebaseAuthUserCollisionException) {
                     Utils.showToast(context, "User with this email already exists")
                 } else {
-                    Utils.showToast(context, "sign up failed ${task.exception}")
+                    Utils.showToast(context, "sign up failed")
                 }
             }
     }
@@ -133,7 +136,7 @@ class ModelFirebase {
     fun getUserDetails(callback: UserDetailsCallback) {
         val email = getLoggedInUserEmail()
         if (email != null) {
-            db.collection(User.COLLECTION_NAME)
+            db.collection(USERS_COLLECTION_NAME)
                 .document(email)
                 .get()
                 .addOnCompleteListener { task ->
@@ -161,5 +164,21 @@ class ModelFirebase {
     fun logout() {
         auth.signOut()
     }
-}
+
+    fun getAllPosts(callback: (List<Post>) -> Unit){
+        db.collection(POSTS_COLLECTION_NAME).get().addOnCompleteListener {
+            when (it.isSuccessful) {
+                true -> {
+                    val posts: MutableList<Post> = mutableListOf()
+                    for (json in it.result) {
+                        val post = Post.fromJSON(json.data)
+                        posts.add(post)
+                    }
+                    callback(posts)
+                }
+                false -> callback(listOf())
+                }
+            }
+        }
+    }
 

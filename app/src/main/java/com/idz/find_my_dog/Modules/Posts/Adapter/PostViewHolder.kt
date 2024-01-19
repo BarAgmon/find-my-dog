@@ -5,7 +5,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.idz.find_my_dog.Models.Post
+import com.idz.find_my_dog.Model.Post
 import com.idz.find_my_dog.Modules.Posts.PostsListActivity
 import com.idz.find_my_dog.R
 

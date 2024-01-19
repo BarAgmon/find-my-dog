@@ -3,7 +3,7 @@ package com.idz.find_my_dog.Modules.Posts.Adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.idz.find_my_dog.Models.Post
+import com.idz.find_my_dog.Model.Post
 import com.idz.find_my_dog.Modules.Posts.PostsListActivity
 import com.idz.find_my_dog.R
 

@@ -1,4 +1,4 @@
-package com.idz.lecture4_demo3.Model
+package com.idz.find_my_dog.Model
 
 data class User(
     val email: String = "",
@@ -7,7 +7,6 @@ data class User(
     val userImageUrl: String = ""
 ) {
     companion object {
-        const val COLLECTION_NAME = "users"
 
         fun fromJSON(json: Map<String, Any>, emailId: String): User {
             val firstName = json["firstName"] as? String ?: ""

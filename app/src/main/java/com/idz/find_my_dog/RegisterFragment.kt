@@ -15,10 +15,9 @@ import android.widget.ImageView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.Navigation
-import com.google.firebase.auth.FirebaseUser
 import com.idz.find_my_dog.Model.ModelFirebase
-import com.idz.lecture4_demo3.Model.Model
 import java.io.ByteArrayOutputStream
+import com.idz.find_my_dog.Model.Model
 import java.util.Locale
 
 class RegisterFragment : Fragment() {

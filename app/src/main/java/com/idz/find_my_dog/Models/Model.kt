@@ -1,4 +1,8 @@
 package com.idz.find_my_dog.Models;
+
+import com.idz.find_my_dog.Model.Post
+import com.idz.find_my_dog.Model.User
+
 class Model private constructor(){
     val posts: MutableList<Post> = ArrayList()
 
@@ -26,8 +30,7 @@ class Model private constructor(){
     init {
         for (i in 0..20) {
             val user = User("name: $i", "https://thispersondoesnotexist.com/")
-            val post = Post("https://random.dog/", "title: $i",
-                user, "2m", "location: here:)", "description: bla bla bla")
+            val post = Post("https://random.dog/", "title: $i", user, "2m", "location: here:)", "description: bla bla bla")
             posts.add(post)
         }
     }

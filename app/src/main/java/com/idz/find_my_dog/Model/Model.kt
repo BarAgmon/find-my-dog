@@ -1,20 +1,13 @@
-package com.idz.lecture4_demo3.Model
+package com.idz.find_my_dog.Model
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.widget.ImageView
 import androidx.lifecycle.MutableLiveData
-import com.idz.find_my_dog.Model.ModelFirebase
-import com.idz.find_my_dog.Utils
-import java.io.ByteArrayOutputStream
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
 class Model private constructor() {
     var executor: Executor = Executors.newFixedThreadPool(1)
-//    var reviewList: MutableLiveData<List<Review?>?>
-//    var myReviews: MutableLiveData<List<Review?>?>
     var modelFirebase: ModelFirebase
     private val avatarLocation = "users_avatars/"
     private val movieLocation = "users_movies/"
@@ -73,4 +66,7 @@ class Model private constructor() {
         modelFirebase.setUserDetails(email, firstName, lastName, imageUrl, callback)
     }
 
+    fun getAllPosts(callback: (List<Post>) -> Unit) {
+        modelFirebase.getAllPosts(callback)
+    }
 }
