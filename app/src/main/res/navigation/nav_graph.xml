@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_loginFragment_to_registrationFragment"
             app:destination="@id/registrationFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_userDetailsFragment"
+            app:destination="@id/userDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/registrationFragment"
@@ -22,6 +25,12 @@
         <action
             android:id="@+id/action_registrationFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/userDetailsFragment"
+        android:name="com.idz.find_my_dog.UserDetailsFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_user_details">
     </fragment>
 
 </navigation>
