@@ -110,7 +110,7 @@ class ModelFirebase {
                     task.exception is com.google.firebase.auth.FirebaseAuthUserCollisionException) {
                     Utils.showToast(context, "User with this email already exists")
                 } else {
-                    Utils.showToast(context, "sign up failed")
+                    Utils.showToast(context, "sign up failed ${task.exception}")
                 }
             }
     }

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/post_details_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:visibility="visible"
+        android:clickable="false"
+        android:focusable="false"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        app:cardPreventCornerOverlap="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.275"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="@color/stroke_color"
+        android:transitionName="@{@string/post_card_transition_name(post.id)}"
+        app:strokeWidth="2dp">
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:alignItems="center"
+            app:flexDirection="column"
+            app:flexWrap="nowrap"
+            app:justifyContent="space_between">
+
+            <ImageView
+                android:id="@+id/dog_post_image"
+                android:layout_width="match_parent"
+                android:layout_height="185dp"
+                android:layout_marginStart="2.5dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginBottom="5dp"
+                android:background="#FFFFFF"
+                android:contentDescription="@string/dog_image"
+                android:scaleType="centerCrop" />
+
+            <com.google.android.flexbox.FlexboxLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                app:flexDirection="row"
+                app:flexWrap="nowrap"
+                app:justifyContent="space_between">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="2dp"
+                    app:cardBackgroundColor="#F4F1F1"
+                    app:cardCornerRadius="150dp">
+                    <ImageView
+                        android:id="@+id/dog_post_publisher_img"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="@string/publisher_img"
+                        android:scaleType="centerCrop" />
+                </androidx.cardview.widget.CardView>
+
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    app:flexDirection="column"
+                    app:flexWrap="nowrap"
+                    app:justifyContent="space_between">
+
+                    <com.google.android.flexbox.FlexboxLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:alignItems="center"
+                        app:flexDirection="row"
+                        app:flexWrap="nowrap"
+                        app:justifyContent="flex_start">
+
+                        <TextView
+                            android:id="@+id/dog_post_publisher_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/josefin_sans_bold"
+                            android:maxLines="2" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2sp"
+                            android:layout_marginEnd="2sp"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/josefin_sans_bold"
+                            android:maxLines="2"
+                            android:text="@string/dot"
+                            android:textSize="5sp" />
+
+                        <TextView
+                            android:id="@+id/dog_post_publish_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/josefin_sans_thin"
+                            android:maxLines="2" />
+                    </com.google.android.flexbox.FlexboxLayout>
+
+                    <TextView
+                        android:id="@+id/dog_post_location"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/josefin_sans_semibold"
+                        android:maxLines="2" />
+                </com.google.android.flexbox.FlexboxLayout>
+            </com.google.android.flexbox.FlexboxLayout>
+        </com.google.android.flexbox.FlexboxLayout>
+    </com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
