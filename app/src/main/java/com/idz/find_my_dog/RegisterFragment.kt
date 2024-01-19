@@ -81,7 +81,8 @@ class RegisterFragment : Fragment() {
                 context, object : ModelFirebase.RegisterCallback {
                 override fun onSuccess() {
                     Utils.showToast(context, "Successfully signed up")
-                    Navigation.findNavController(view).popBackStack()                }
+                    Navigation.findNavController(view).popBackStack()
+                }
             })
         })
 
