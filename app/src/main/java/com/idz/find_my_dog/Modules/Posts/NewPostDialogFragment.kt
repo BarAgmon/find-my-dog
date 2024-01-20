@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.textfield.TextInputEditText
@@ -70,12 +69,18 @@ class NewPostDialogFragment : DialogFragment() {
             //TODO - fix this to take real params include image, add on success function, the dismiss killing session
             val postTitle = title?.text.toString()
             val postDetails = details?.text.toString()
+            val post = Post("",postTitle,loggedInUser, getCurrentDateTime(),"",postDetails,loggedInUser.email)
+            model.addPost(post, object: ModelFirebase.AddNewPostCallback {
 
-            var post = Post("",postTitle,loggedInUser, getCurrentDateTime(),"",postDetails,loggedInUser.email)
-                model.addPost(post){
+                override fun onSuccess(){
                     Utils.showToast(requireContext(), "Posted successfully")
+                    dismiss()
                 }
-            dismiss()
+
+                override fun onFailure() {
+                    Utils.showToast(requireContext(), "Failed to post. Try again later.")
+                }
+            })
         }
     }
 

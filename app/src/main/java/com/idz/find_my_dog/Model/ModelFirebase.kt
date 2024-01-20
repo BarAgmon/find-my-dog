@@ -62,7 +62,10 @@ class ModelFirebase {
         fun onSuccess(downloadUrl: String)
     }
 
-
+    interface AddNewPostCallback {
+        fun onSuccess()
+        fun onFailure()
+    }
     fun setUserDetails(email: String, firstName: String, lastName: String, imageUrl: String,
                        callback: SetUserDetailsCallback){
         val jsonReview: MutableMap<String, Any> = HashMap()
@@ -180,9 +183,11 @@ class ModelFirebase {
                 }
             }
         }
-    fun addPost(post: Post, callback: () -> Unit) {
+    fun addPost(post: Post, callback: AddNewPostCallback) {
         db.collection(POSTS_COLLECTION_NAME).add(post.json).addOnSuccessListener {
-            callback()
+            callback.onSuccess()
+        }.addOnFailureListener {
+            callback.onFailure()
         }
     }
 
