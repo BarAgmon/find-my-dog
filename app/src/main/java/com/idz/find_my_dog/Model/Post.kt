@@ -1,9 +1,12 @@
 package com.idz.find_my_dog.Model
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.Date
+import kotlinx.parcelize.Parcelize
+
 
 @Entity
+@Parcelize
 data class Post (@PrimaryKey val id: String = "",
                  val imageURL: String,
                  val title: String,
@@ -11,8 +14,7 @@ data class Post (@PrimaryKey val id: String = "",
                  val date: String,
                  val location: String,
                  val description: String,
-                 val publisherEmailId:String)
-{
+                 val publisherEmailId:String) : Parcelable {
     constructor(imageURL: String,
                 title: String,
                 publisher: User,
