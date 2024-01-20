@@ -45,8 +45,8 @@
 
                     override fun onItemClick(position: Int) {
                         val clickedPost = posts[position]
-                        clickedPost.let {
-                            val action = PostsFragmentDirections.actionPostsFragmentToPostDetailsFragment(it.title)
+                        clickedPost.let { post ->
+                            val action = PostsFragmentDirections.actionPostsFragmentToPostDetailsFragment(post)
                             Navigation.findNavController(view).navigate(action)
                         }
                     }
