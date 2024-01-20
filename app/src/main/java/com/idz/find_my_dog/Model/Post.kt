@@ -22,7 +22,7 @@ data class Post (@PrimaryKey val id: String = "",
                 publisherEmailId:String) : this("",imageURL,title,publisher,date,location
                                                 ,description, publisherEmailId)
     companion object {
-        const val ID = "DocumentSnapshot"
+        const val ID = "id"
         const val IMAGE_URL = "imageURL"
         const val TITLE = "title"
         const val PUBLISHER = "publisher"
@@ -46,7 +46,6 @@ data class Post (@PrimaryKey val id: String = "",
     val json: Map<String, Any>
         get() {
             return hashMapOf(
-                ID to id,
                 IMAGE_URL to imageURL,
                 TITLE to title,
                 PUBLISHER to publisher,
