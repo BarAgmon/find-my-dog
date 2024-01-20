@@ -66,7 +66,7 @@ class Model private constructor() {
         modelFirebase.getAllPosts(callback)
     }
 
-    fun addPost(post: Post, callback: () -> Unit){
+    fun addPost(post: Post, callback: ModelFirebase.AddNewPostCallback){
         modelFirebase.addPost(post,callback)
     }
 

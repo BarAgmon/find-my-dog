@@ -79,8 +79,8 @@ class UserDetailsFragment : Fragment() {
                     emailTxt?.setText(myDetails.email)
                     firstnameTxt?.setText(myDetails.firstName)
                     lastnameTxt?.setText(myDetails.lastName)
-                    if (myDetails.userImageUrl != "") {
-                        userImageUrl = myDetails.userImageUrl.toString()
+                    if (myDetails.imageUrl != "") {
+                        userImageUrl = myDetails.imageUrl.toString()
                         Picasso.get().load(userImageUrl).into(userImg)
                     }
                 }

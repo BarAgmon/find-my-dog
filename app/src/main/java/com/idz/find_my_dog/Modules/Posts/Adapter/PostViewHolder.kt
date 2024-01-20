@@ -6,7 +6,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.idz.find_my_dog.Model.Post
-import com.idz.find_my_dog.Modules.Posts.PostsListActivity
+import com.idz.find_my_dog.Modules.Posts.PostsFragment
 import com.idz.find_my_dog.R
 
 /*
@@ -15,8 +15,8 @@ used to display the data of a post in a RecyclerView.
  It sets up the views, handles click events, and binds the post data to the views.
  */
 class PostViewHolder(val post: View,
-                     val listener: PostsListActivity.OnPostClickListener?,
-                     val posts: List<Post>?) : RecyclerView.ViewHolder(post){
+                     val listener: PostsFragment.OnPostClickListener?,
+                     val posts: List<Post>) : RecyclerView.ViewHolder(post){
     /*
     Properties definition
      */
@@ -35,7 +35,7 @@ class PostViewHolder(val post: View,
         post.setOnClickListener {
             Log.i("TAG", "StudentViewHolder: Position clicked $adapterPosition")
             //listener?.onItemClick(adapterPosition)
-            val clickedPost = posts?.get(adapterPosition)
+            val clickedPost = posts[adapterPosition]
             listener?.onItemClick(adapterPosition)
             listener?.onPostClicked(clickedPost)
         }

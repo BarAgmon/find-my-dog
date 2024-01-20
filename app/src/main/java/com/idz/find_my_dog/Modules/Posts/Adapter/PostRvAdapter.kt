@@ -4,11 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.idz.find_my_dog.Model.Post
-import com.idz.find_my_dog.Modules.Posts.PostsListActivity
+import com.idz.find_my_dog.Modules.Posts.PostsFragment
 import com.idz.find_my_dog.R
+import com.squareup.picasso.Picasso
 
-class PostRvAdapter(private val posts: List<Post>?): RecyclerView.Adapter<PostViewHolder>() {
-    var listener: PostsListActivity.OnPostClickListener? = null
+class PostRvAdapter(private val posts: List<Post>): RecyclerView.Adapter<PostViewHolder>() {
+    var listener: PostsFragment.OnPostClickListener? = null
 
     /*
     This function is called when the RecyclerView needs a new ViewHolder
@@ -25,7 +26,7 @@ class PostRvAdapter(private val posts: List<Post>?): RecyclerView.Adapter<PostVi
     }
 
     override fun getItemCount(): Int {
-        return posts?.size ?: 0
+        return posts.size ?: 0
     }
 
     /*
@@ -36,11 +37,11 @@ class PostRvAdapter(private val posts: List<Post>?): RecyclerView.Adapter<PostVi
     contents to reflect the item at the current position.
      */
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-        val post = posts?.get(position)
-        holder.dogPostLocation?.text = post?.location
-        holder.dogPostPublishDate?.text = post?.date.toString()
-        holder.dogPostPublisherName?.text = post?.publisher?.firstName
-        //holder.dogPostImage?.setImageURI()
+        val post = posts[position]
+        holder.dogPostLocation?.text = post.location
+        holder.dogPostPublishDate?.text = post.date
+        holder.dogPostPublisherName?.text = post.publisher.firstName + " " + post.publisher.lastName
+        Picasso.get().load(post.publisher.imageUrl).into(holder.dogPostPublisherImg);
 //        holder.dogPostPublisherImg
 
     }

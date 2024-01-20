@@ -19,39 +19,46 @@
     class PostsFragment : Fragment() {
 
         var postsListRv: RecyclerView? = null
-        var posts: List<Post>? = null
+        lateinit var posts: List<Post>
         var newPostButton : FloatingActionButton?  = null
         var model: Model = Model.instance
+
+        interface OnPostClickListener {
+            fun onPostClicked(clickedPost: Post)
+            fun onItemClick(position: Int)
+        }
         override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
         ): View? {
-            // Inflate the layout for this fragment
             val view = inflater.inflate(R.layout.fragment_posts_list, container, false)
             newPostButton = view?.findViewById(R.id.add_new_post)
-            model.getAllPosts {
-                this.posts = it
-            }
+
             postsListRv = view.findViewById(R.id.posts_list_rv)
             postsListRv?.setHasFixedSize(true)
             postsListRv?.layoutManager = LinearLayoutManager(context)
-            val adapter = PostRvAdapter(posts)
-            adapter.listener = object : PostsListActivity.OnPostClickListener {
 
-                override fun onItemClick(position: Int) {
-                    val clickedPost = posts?.get(position)
-                    clickedPost?.let {
-                        val action = PostsFragmentDirections.actionPostsFragmentToPostDetailsFragment(it.title)
-                        Navigation.findNavController(view).navigate(action)
+            model.getAllPosts {
+                this.posts = it
+                val adapter = PostRvAdapter(posts)
+                adapter.listener = object : OnPostClickListener {
+
+                    override fun onItemClick(position: Int) {
+                        val clickedPost = posts[position]
+                        clickedPost.let {
+                            val action = PostsFragmentDirections.actionPostsFragmentToPostDetailsFragment(it.title)
+                            Navigation.findNavController(view).navigate(action)
+                        }
+                    }
+
+                    override fun onPostClicked(clickedPost: Post) {
+                        Log.i("TAG", "STUDENT $clickedPost")
                     }
                 }
 
-                override fun onPostClicked(clickedPost: Post?) {
-                    Log.i("TAG", "STUDENT $clickedPost")
-                }
+                postsListRv?.adapter = adapter
+                adapter.notifyDataSetChanged()
             }
-
-            postsListRv?.adapter = adapter
             newPostButton?.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_postsFragment_to_newPostDialogFragment))
 
             return view
@@ -66,3 +73,4 @@
             }
         }
     }
+
