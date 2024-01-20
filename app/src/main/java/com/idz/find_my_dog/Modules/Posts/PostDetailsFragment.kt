@@ -1,6 +1,9 @@
 package com.idz.find_my_dog.Modules.Posts
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -10,20 +13,26 @@ import androidx.navigation.fragment.navArgs
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textview.MaterialTextView
 import com.idz.find_my_dog.R
+import com.squareup.picasso.Picasso
 
-class PostDetailsFragment : Fragment(R.layout.fragment_post_details) {
+class PostDetailsFragment : Fragment() {
     private val args : PostDetailsFragmentArgs by navArgs()
     var dogPostImg: ImageView? = null
     var dogPostPublisherImg: ImageView? = null
     var publisherName: TextView? = null
     var publishDate: TextView? = null
     var location: TextView? = null
+    var title: TextView? = null
     var description: MaterialTextView? = null
     var sendEmailButton: FloatingActionButton? = null
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_post_details, container, false)
+        setupUI(view)
+        adaptPostData()
+        return view
     }
     private fun setupUI(view: View){
         this.dogPostImg = view.findViewById(R.id.post_details_dog_image)
@@ -33,6 +42,23 @@ class PostDetailsFragment : Fragment(R.layout.fragment_post_details) {
         this.location = view.findViewById(R.id.post_details_location)
         this.description = view.findViewById(R.id.post_details_description)
         this.sendEmailButton = view.findViewById(R.id.post_details_send_mail)
+        this.title = view.findViewById(R.id.post_details_title)
+    }
+
+    private fun adaptPostData(){
+        val currPost = args.post
+        this.publisherName?.text = currPost.publisher.firstName + " " + currPost.publisher.lastName
+        this.publishDate?.text = currPost.date
+        this.location?.text = currPost.location
+        this.description?.text = currPost.description
+        this.title?.text = currPost.title
+        Picasso.get().load(currPost.publisher.imageUrl).into(this.dogPostPublisherImg);
+        if (currPost.imageURL != ""){
+            Picasso.get().load(currPost.imageURL).into(this.dogPostImg);
+        } else {
+            this.dogPostImg?.setImageResource(R.drawable.no_img)
+        }
+
     }
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
         return if (enter) {
