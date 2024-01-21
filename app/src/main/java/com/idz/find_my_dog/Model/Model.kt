@@ -9,7 +9,6 @@ import java.util.concurrent.Executors
 class Model private constructor() {
     var executor: Executor = Executors.newFixedThreadPool(1)
     private var modelFirebase: ModelFirebase = ModelFirebase()
-    private val avatarLocation = "users_avatars/"
     private var loadingState = MutableLiveData<LoadingState>()
     companion object {
         val instance: Model = Model()
@@ -23,10 +22,10 @@ class Model private constructor() {
         loaded
     }
     fun register(email: String, password: String, firstName: String, lastName: String,
-                 userImg: ImageView?, context: Context,
+                 userImg: ImageView?, imageLocation: String, context: Context,
                  callback: ModelFirebase.RegisterCallback) {
         modelFirebase.register(email, password, context, callback)
-        modelFirebase.uploadImage(email, userImg, avatarLocation, context,
+        modelFirebase.uploadImage(email, userImg, imageLocation, context,
             object: ModelFirebase.UploadImageCallback{
                 override fun onSuccess(downloadUrl: String) {
                     setUserDetails(email, firstName, lastName, downloadUrl,
@@ -51,10 +50,9 @@ class Model private constructor() {
     fun updatePassword(password: String, context: Context) {
         modelFirebase.updatePassword(password, context)
     }
-
-    fun uploadImage(email: String, userImg: ImageView?, context: Context,
+    fun uploadImage(email: String, userImg: ImageView?, imageLocation: String, context: Context,
                     callback: ModelFirebase.UploadImageCallback) {
-        modelFirebase.uploadImage(email, userImg, avatarLocation, context, callback)
+        modelFirebase.uploadImage(email, userImg, imageLocation, context, callback)
     }
 
     fun setUserDetails(email: String, firstName: String, lastName: String, imageUrl: String,

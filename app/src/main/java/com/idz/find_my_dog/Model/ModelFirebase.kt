@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.firestoreSettings
 import com.google.firebase.firestore.memoryCacheSettings
@@ -85,11 +86,22 @@ class ModelFirebase {
             }
     }
 
-    fun uploadImage(email: String, userImg: ImageView?, imageLocation: String,
+    /**
+     * Upload an image to firebase db.
+     * @param email: A String used to uniquely identify the user's image.
+     * @param imgView: An ImageView containing the image to be uploaded.
+     * @param imageLocation: A String representing the path in Firebase Storage where the image will be stored.
+     * @param context: A Context used for showing a toast message.
+     * @param callback: An instance of UploadImageCallback.
+     */
+    fun uploadImage(email: String, imgView: ImageView?, imageLocation: String,
                     context: Context, callback: UploadImageCallback) {
-
-        val bitmap = (userImg?.drawable as BitmapDrawable).bitmap
+        // The image from imgView is extracted as a Bitmap.
+        val bitmap = (imgView?.drawable as BitmapDrawable).bitmap
         val baos = ByteArrayOutputStream()
+
+        // Compressed bitmap into JPEG format with quality 100
+        // and write into the ByteArrayOutputStream.
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val data = baos.toByteArray()
         val storageRef: StorageReference = storage.reference
@@ -169,7 +181,7 @@ class ModelFirebase {
     }
 
     fun getAllPosts(callback: (List<Post>) -> Unit){
-        db.collection(POSTS_COLLECTION_NAME).get().addOnCompleteListener {
+        db.collection(POSTS_COLLECTION_NAME).orderBy(Post.DATE, Query.Direction.DESCENDING).get().addOnCompleteListener {
             when (it.isSuccessful) {
                 true -> {
                     val posts: MutableList<Post> = mutableListOf()

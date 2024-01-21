@@ -34,7 +34,6 @@ class PostViewHolder(val post: View,
 
         post.setOnClickListener {
             Log.i("TAG", "StudentViewHolder: Position clicked $adapterPosition")
-            //listener?.onItemClick(adapterPosition)
             val clickedPost = posts[adapterPosition]
             listener?.onItemClick(adapterPosition)
             listener?.onPostClicked(clickedPost)

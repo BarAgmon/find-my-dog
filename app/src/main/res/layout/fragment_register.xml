@@ -73,6 +73,7 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:ems="10"
+            android:textColor="#000000"
             android:hint="First name"
             android:maxLength="25"
             android:inputType="textPersonName" />
@@ -109,6 +110,7 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:ems="10"
+            android:textColor="#000000"
             android:hint="Last name"
             android:maxLength="25"
             android:inputType="textPersonName" />
@@ -145,6 +147,7 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:ems="10"
+            android:textColor="#000000"
             android:hint="Email"
             android:maxLength="35"
             android:inputType="textEmailAddress" />
@@ -181,6 +184,7 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:ems="10"
+            android:textColor="#000000"
             android:hint="Password"
             android:maxLength="20"
             android:inputType="textPassword" />
@@ -217,6 +221,7 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:ems="10"
+            android:textColor="#000000"
             android:hint="Confirm password"
             android:maxLength="20"
             android:inputType="textPassword" />
