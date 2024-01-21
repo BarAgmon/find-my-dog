@@ -18,6 +18,7 @@ import androidx.navigation.Navigation
 import com.idz.find_my_dog.Model.ModelFirebase
 import java.io.ByteArrayOutputStream
 import com.idz.find_my_dog.Model.Model
+import com.idz.find_my_dog.Model.User
 import java.util.Locale
 
 class RegisterFragment : Fragment() {
@@ -77,7 +78,7 @@ class RegisterFragment : Fragment() {
             val lastName = lastName?.text.toString()
 
             model.register(emailString, passwordString, firstName, lastName, userImg,
-                context, object : ModelFirebase.RegisterCallback {
+                User.AVATAR_LOCATION, context, object : ModelFirebase.RegisterCallback {
                 override fun onSuccess() {
                     Utils.showToast(context, "Successfully signed up")
                     Navigation.findNavController(view).popBackStack()

@@ -42,7 +42,7 @@ class PostRvAdapter(private val posts: List<Post>): RecyclerView.Adapter<PostVie
         holder.dogPostPublishDate?.text = post.date
         holder.dogPostPublisherName?.text = post.publisher.firstName + " " + post.publisher.lastName
         Picasso.get().load(post.publisher.imageUrl).into(holder.dogPostPublisherImg);
-//        holder.dogPostPublisherImg
+        Picasso.get().load(post.imageURL).into(holder.dogPostImage);
 
     }
 }

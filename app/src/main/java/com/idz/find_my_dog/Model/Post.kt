@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 @Entity
 @Parcelize
 data class Post (@PrimaryKey val id: String = "",
-                 val imageURL: String,
+                 var imageURL: String,
                  val title: String,
                  val publisher: User,
                  val date: String,
@@ -24,6 +24,7 @@ data class Post (@PrimaryKey val id: String = "",
                 publisherEmailId:String) : this("",imageURL,title,publisher,date,location
                                                 ,description, publisherEmailId)
     companion object {
+        const val POST_IMAGE_LOCATION = "posts_img/"
         const val ID = "id"
         const val IMAGE_URL = "imageURL"
         const val TITLE = "title"

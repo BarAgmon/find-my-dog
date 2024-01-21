@@ -66,19 +66,26 @@ class NewPostDialogFragment : DialogFragment() {
             dismiss()
         }
         sendPostButton.setOnClickListener {
-            //TODO - fix this to take real params include image, add on success function, the dismiss killing session
+            val context = requireContext()
             val postTitle = title?.text.toString()
             val postDetails = details?.text.toString()
             val post = Post("",postTitle,loggedInUser, getCurrentDateTime(),"",postDetails,loggedInUser.email)
-            model.addPost(post, object: ModelFirebase.AddNewPostCallback {
 
-                override fun onSuccess(){
-                    Utils.showToast(requireContext(), "Posted successfully")
-                    dismiss()
-                }
+            model.uploadImage(loggedInUser.email, image, Post.POST_IMAGE_LOCATION,
+                context, object: ModelFirebase.UploadImageCallback{
+                override fun onSuccess(downloadUrl: String) {
+                    post.imageURL = downloadUrl
+                    model.addPost(post, object: ModelFirebase.AddNewPostCallback {
 
-                override fun onFailure() {
-                    Utils.showToast(requireContext(), "Failed to post. Try again later.")
+                        override fun onSuccess(){
+                            Utils.showToast(context, "Posted successfully")
+                            dismiss()
+                        }
+
+                        override fun onFailure() {
+                            Utils.showToast(context, "Failed to post. Try again later.")
+                        }
+                    })
                 }
             })
         }

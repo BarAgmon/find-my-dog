@@ -11,7 +11,7 @@ data class User(
     val imageUrl: String = ""
 ) : Parcelable {
     companion object {
-
+        const val AVATAR_LOCATION = "users_avatars/"
         fun fromJSON(json: Map<String, Any>, emailId: String): User {
             val firstName = json["firstName"] as? String ?: ""
             val lastName = json["lastName"] as? String ?: ""
