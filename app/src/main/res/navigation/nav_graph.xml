@@ -43,6 +43,9 @@
         android:name="com.idz.find_my_dog.Modules.Posts.PostsFragment"
         android:label="Explore posts"
         tools:layout="@layout/fragment_posts_list">
+        <argument
+            android:name="isUserPostsOnly"
+            app:argType="boolean" />
         <action
             android:id="@+id/action_postsFragment_to_postDetailsFragment"
             app:destination="@id/postDetailsFragment" />

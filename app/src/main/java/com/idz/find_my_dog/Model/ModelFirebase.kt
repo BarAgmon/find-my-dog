@@ -92,10 +92,11 @@ class ModelFirebase {
      * @param imgView: An ImageView containing the image to be uploaded.
      * @param imageLocation: A String representing the path in Firebase Storage where the image will be stored.
      * @param context: A Context used for showing a toast message.
+     * @param pathString: The path on db which the image will be saved.
      * @param callback: An instance of UploadImageCallback.
      */
-    fun uploadImage(email: String, imgView: ImageView?, imageLocation: String,
-                    context: Context, callback: UploadImageCallback) {
+    fun uploadImage(imgView: ImageView?, context: Context, pathString: String,
+                    callback: UploadImageCallback) {
         // The image from imgView is extracted as a Bitmap.
         val bitmap = (imgView?.drawable as BitmapDrawable).bitmap
         val baos = ByteArrayOutputStream()
@@ -105,7 +106,7 @@ class ModelFirebase {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val data = baos.toByteArray()
         val storageRef: StorageReference = storage.reference
-        val imgRef: StorageReference = storageRef.child(imageLocation + email)
+        val imgRef: StorageReference = storageRef.child(pathString)
         val uploadTask: UploadTask = imgRef.putBytes(data)
 
         uploadTask.addOnFailureListener {

@@ -119,7 +119,8 @@ class UserDetailsFragment : Fragment() {
             }
 
             if (userImg?.drawable != null) {
-                model.uploadImage(emailString, userImg,User.AVATAR_LOCATION, context,
+                val pathString = User.AVATAR_LOCATION + emailString
+                model.uploadImage( userImg,pathString, context,
                     object: ModelFirebase.UploadImageCallback{
                         override fun onSuccess(downloadUrl: String) {
                             setUserDetails(emailString, firstName, lastName, downloadUrl,
