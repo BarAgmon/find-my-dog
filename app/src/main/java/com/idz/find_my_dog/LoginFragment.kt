@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 import com.idz.find_my_dog.Model.ModelFirebase
 import com.idz.find_my_dog.Model.Model
+import com.idz.find_my_dog.Modules.Posts.PostsFragmentDirections
 
 class LoginFragment : Fragment() {
     var signUp: Button? = null
@@ -45,8 +46,8 @@ class LoginFragment : Fragment() {
 
             model.login(emailString, passwordString, context, object : ModelFirebase.LoginCallback {
                 override fun onSuccess(user: FirebaseUser?) {
-                    Navigation.findNavController(view).
-                    navigate(R.id.action_loginFragment_to_postsFragment)
+                    val action = LoginFragmentDirections.actionLoginFragmentToPostsFragment(false)
+                    Navigation.findNavController(view).navigate(action)
                 }
             })
         })

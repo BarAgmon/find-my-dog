@@ -76,9 +76,9 @@ class RegisterFragment : Fragment() {
             }
             val firstName = firstName?.text.toString()
             val lastName = lastName?.text.toString()
-
+            val pathString = User.AVATAR_LOCATION + emailString
             model.register(emailString, passwordString, firstName, lastName, userImg,
-                User.AVATAR_LOCATION, context, object : ModelFirebase.RegisterCallback {
+                pathString, context, object : ModelFirebase.RegisterCallback {
                 override fun onSuccess() {
                     Utils.showToast(context, "Successfully signed up")
                     Navigation.findNavController(view).popBackStack()

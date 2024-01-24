@@ -29,10 +29,12 @@ class NewPostDialogFragment : DialogFragment() {
     private lateinit var sendPostButton : ImageView
     private lateinit var cancelButton : ImageView
     private lateinit var loggedInUser: User
+    private var isImageSet = false
     private val galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) {
         val galleryUri = it
         try {
-            image.setImageURI(galleryUri)
+            this.image.setImageURI(galleryUri)
+            this.isImageSet = true
         } catch(e: Exception) {
             e.printStackTrace()
         }
@@ -70,24 +72,30 @@ class NewPostDialogFragment : DialogFragment() {
             val postTitle = title?.text.toString()
             val postDetails = details?.text.toString()
             val post = Post("",postTitle,loggedInUser, getCurrentDateTime(),"",postDetails,loggedInUser.email)
+            if(postTitle == "" || postDetails == ""){
+                Utils.showToast(context, "Please fill all fields")
+            } else if (!this.isImageSet) {
+                Utils.showToast(context, "Please upload an image")
+            }
+            else{
+                var pathString = Post.POST_IMAGE_LOCATION + loggedInUser.email + Utils.getUniqueID()
+                model.uploadImage( image,pathString, context, object: ModelFirebase.UploadImageCallback{
+                        override fun onSuccess(downloadUrl: String) {
+                            post.imageURL = downloadUrl
+                            model.addPost(post, object: ModelFirebase.AddNewPostCallback {
 
-            model.uploadImage(loggedInUser.email, image, Post.POST_IMAGE_LOCATION,
-                context, object: ModelFirebase.UploadImageCallback{
-                override fun onSuccess(downloadUrl: String) {
-                    post.imageURL = downloadUrl
-                    model.addPost(post, object: ModelFirebase.AddNewPostCallback {
+                                override fun onSuccess(){
+                                    Utils.showToast(context, "Posted successfully")
+                                    dismiss()
+                                }
 
-                        override fun onSuccess(){
-                            Utils.showToast(context, "Posted successfully")
-                            dismiss()
-                        }
-
-                        override fun onFailure() {
-                            Utils.showToast(context, "Failed to post. Try again later.")
+                                override fun onFailure() {
+                                    Utils.showToast(context, "Failed to post. Try again later.")
+                                }
+                            })
                         }
                     })
-                }
-            })
+            }
         }
     }
 

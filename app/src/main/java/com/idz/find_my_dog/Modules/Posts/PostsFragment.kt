@@ -1,16 +1,21 @@
     package com.idz.find_my_dog.Modules.Posts
 
     import android.os.Bundle
+    import android.text.Editable
+    import android.text.TextWatcher
     import android.util.Log
     import android.view.LayoutInflater
     import android.view.View
     import android.view.ViewGroup
+    import android.widget.ArrayAdapter
     import android.widget.AutoCompleteTextView
     import androidx.fragment.app.Fragment
     import androidx.navigation.Navigation
+    import androidx.navigation.fragment.navArgs
     import androidx.recyclerview.widget.LinearLayoutManager
     import androidx.recyclerview.widget.RecyclerView
     import com.google.android.material.floatingactionbutton.FloatingActionButton
+    import com.idz.find_my_dog.Model.Locations
     import com.idz.find_my_dog.Model.Model
     import com.idz.find_my_dog.Model.Post
     import com.idz.find_my_dog.Modules.Posts.Adapter.PostRvAdapter
@@ -22,6 +27,9 @@
         lateinit var posts: List<Post>
         var newPostButton : FloatingActionButton?  = null
         var model: Model = Model.instance
+        private val args : PostsFragmentArgs by navArgs()
+        private var searchAutoComplete: AutoCompleteTextView? = null
+        private var citiesAdapter: ArrayAdapter<String>? = null
 
         interface OnPostClickListener {
             fun onPostClicked(clickedPost: Post)
@@ -33,7 +41,6 @@
         ): View? {
             val view = inflater.inflate(R.layout.fragment_posts_list, container, false)
             newPostButton = view?.findViewById(R.id.add_new_post)
-
             postsListRv = view.findViewById(R.id.posts_list_rv)
             postsListRv?.setHasFixedSize(true)
             postsListRv?.layoutManager = LinearLayoutManager(context)
@@ -60,17 +67,32 @@
                 adapter.notifyDataSetChanged()
             }
             newPostButton?.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_postsFragment_to_newPostDialogFragment))
-
+            setupCitiesSearchbarArray(view)
             return view
         }
+        private fun setupCitiesSearchbarArray(view: View) {
+            this.searchAutoComplete = view.findViewById<AutoCompleteTextView>(R.id.searchAutoCompleteTextView)
+            val cities = Locations.instance.locations
 
-        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            super.onViewCreated(view, savedInstanceState)
-            val searchBar = view.findViewById<AutoCompleteTextView>(R.id.searchAutoCompleteTextView)
-            searchBar.setOnClickListener {
-                val action = PostsFragmentDirections.actionPostsFragmentToSearchFragment()
-                Navigation.findNavController(view).navigate(action)
+            // Setup the adapter
+            citiesAdapter = ArrayAdapter<String>(requireContext(), android.R.layout.select_dialog_item, cities)
+            this.searchAutoComplete?.setAdapter(citiesAdapter)
+
+            // Set the item click listener
+            this.searchAutoComplete?.setOnItemClickListener { parent, _, position, _ ->
+                val selectedCity = parent.adapter.getItem(position) as String
+                Log.i("search bar",selectedCity)
             }
+
+            this.searchAutoComplete?.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(typedString: Editable) {
+                    // Filter the adapter based on the input text
+                    citiesAdapter?.filter?.filter(typedString)
+                }
+
+                override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+            })
         }
     }
 
