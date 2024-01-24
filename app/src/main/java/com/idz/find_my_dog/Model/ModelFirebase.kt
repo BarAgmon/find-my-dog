@@ -67,6 +67,11 @@ class ModelFirebase {
         fun onSuccess()
         fun onFailure()
     }
+
+    interface getPostsByLocationCallback{
+        fun onSuccess(postsByLocation: List<Post>)
+        fun onFailure()
+    }
     fun setUserDetails(email: String, firstName: String, lastName: String, imageUrl: String,
                        callback: SetUserDetailsCallback){
         val jsonReview: MutableMap<String, Any> = HashMap()
@@ -219,6 +224,20 @@ class ModelFirebase {
                     }
                     false -> callback(listOf())
                 }
+            }
+    }
+
+    fun getPostsByLocation(location: String, callback: getPostsByLocationCallback){
+        db.collection(POSTS_COLLECTION_NAME).whereEqualTo(Post.LOCATION, location)
+            .get().addOnCompleteListener {
+                val posts: MutableList<Post> = mutableListOf()
+                for (json in it.result) {
+                    val post = Post.fromJSON(json.data)
+                    posts.add(post)
+                }
+                callback.onSuccess(posts)
+            }.addOnFailureListener {
+                callback.onFailure()
             }
     }
     fun getMyPosts(callback: (List<Post>) -> Unit){

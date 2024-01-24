@@ -17,6 +17,7 @@
     import com.google.android.material.floatingactionbutton.FloatingActionButton
     import com.idz.find_my_dog.Model.Locations
     import com.idz.find_my_dog.Model.Model
+    import com.idz.find_my_dog.Model.ModelFirebase
     import com.idz.find_my_dog.Model.Post
     import com.idz.find_my_dog.Modules.Posts.Adapter.PostRvAdapter
     import com.idz.find_my_dog.R
@@ -30,6 +31,7 @@
         private val args : PostsFragmentArgs by navArgs()
         private var searchAutoComplete: AutoCompleteTextView? = null
         private var citiesAdapter: ArrayAdapter<String>? = null
+        private val cities = Locations.instance.locations
 
         interface OnPostClickListener {
             fun onPostClicked(clickedPost: Post)
@@ -67,12 +69,12 @@
                 adapter.notifyDataSetChanged()
             }
             newPostButton?.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_postsFragment_to_newPostDialogFragment))
-            setupCitiesSearchbarArray(view)
+            setupCitiesSearchbarArray(view, postsListRv?.adapter)
             return view
         }
-        private fun setupCitiesSearchbarArray(view: View) {
+        private fun setupCitiesSearchbarArray(view: View, adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>?) {
             this.searchAutoComplete = view.findViewById<AutoCompleteTextView>(R.id.searchAutoCompleteTextView)
-            val cities = Locations.instance.locations
+
 
             // Setup the adapter
             citiesAdapter = ArrayAdapter<String>(requireContext(), android.R.layout.select_dialog_item, cities)
@@ -81,7 +83,18 @@
             // Set the item click listener
             this.searchAutoComplete?.setOnItemClickListener { parent, _, position, _ ->
                 val selectedCity = parent.adapter.getItem(position) as String
-                Log.i("search bar",selectedCity)
+                model.getPostsByLocation(selectedCity,
+                    object: ModelFirebase.getPostsByLocationCallback{
+                        override fun onFailure() {
+                            posts = listOf()
+                            adapter?.notifyDataSetChanged()
+                        }
+
+                        override fun onSuccess(postsByLocation: List<Post>) {
+                            posts = postsByLocation
+                            adapter?.notifyDataSetChanged()
+                        }
+                })
             }
 
             this.searchAutoComplete?.addTextChangedListener(object : TextWatcher {
