@@ -7,20 +7,19 @@ import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
 class Model private constructor() {
-    var executor: Executor = Executors.newFixedThreadPool(1)
     private var modelFirebase: ModelFirebase = ModelFirebase()
-    private var loadingState = MutableLiveData<LoadingState>()
+//    private var loadingState = MutableLiveData<LoadingState>()
     companion object {
         val instance: Model = Model()
     }
-    init {
-        loadingState.value = LoadingState.loaded
-    }
-
-    enum class LoadingState {
-        loading,
-        loaded
-    }
+//    init {
+//        loadingState.value = LoadingState.loaded
+//    }
+//
+//    enum class LoadingState {
+//        loading,
+//        loaded
+//    }
     fun register(email: String, password: String, firstName: String, lastName: String,
                  userImg: ImageView?, pathString: String, context: Context,
                  callback: ModelFirebase.RegisterCallback) {
@@ -50,6 +49,7 @@ class Model private constructor() {
     fun updatePassword(password: String, context: Context) {
         modelFirebase.updatePassword(password, context)
     }
+
     fun uploadImage(userImg: ImageView?, pathString: String, context: Context,
                     callback: ModelFirebase.UploadImageCallback) {
         modelFirebase.uploadImage(userImg, context,pathString, callback)
@@ -68,4 +68,18 @@ class Model private constructor() {
         modelFirebase.addPost(post,callback)
     }
 
+    fun setPost(newPost: Post, callback: ModelFirebase.SetPostCallback){
+        modelFirebase.setPost(newPost,callback)
+    }
+    fun getPostsByLocation(location: String, callback: ModelFirebase.getPostsByLocationCallback) {
+        modelFirebase.getPostsByLocation(location,callback)
+    }
+
+    fun getCurrUserPosts(callback: (List<Post>) -> Unit) {
+        modelFirebase.getCurrUserPosts(callback)
+    }
+
+    fun deletePost(post: Post,callback: ModelFirebase.DeletePostCallback){
+        modelFirebase.deletePost(post,callback)
+    }
 }
