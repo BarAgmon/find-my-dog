@@ -70,4 +70,8 @@ class Model private constructor() {
     fun getPostsByLocation(location: String, callback: ModelFirebase.getPostsByLocationCallback) {
         modelFirebase.getPostsByLocation(location,callback)
     }
+
+    fun getCurrUserPosts(callback: (List<Post>) -> Unit) {
+        modelFirebase.getCurrUserPosts(callback)
+    }
 }

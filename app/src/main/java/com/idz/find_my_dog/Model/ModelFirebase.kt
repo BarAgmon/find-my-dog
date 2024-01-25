@@ -240,7 +240,7 @@ class ModelFirebase {
                 callback.onFailure()
             }
     }
-    fun getMyPosts(callback: (List<Post>) -> Unit){
+    fun getCurrUserPosts(callback: (List<Post>) -> Unit){
         val currUserEmail = auth.currentUser!!.email
         db.collection(POSTS_COLLECTION_NAME).whereEqualTo(Post.PUBLISHER_EMAIL_ID, currUserEmail)
             .get().addOnCompleteListener {
