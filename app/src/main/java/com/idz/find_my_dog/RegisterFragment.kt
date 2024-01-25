@@ -1,7 +1,6 @@
 package com.idz.find_my_dog
 
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -15,10 +14,9 @@ import android.widget.ImageView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.Navigation
-import com.google.firebase.auth.FirebaseUser
 import com.idz.find_my_dog.Model.ModelFirebase
-import com.idz.lecture4_demo3.Model.Model
-import java.io.ByteArrayOutputStream
+import com.idz.find_my_dog.Model.Model
+import com.idz.find_my_dog.Model.User
 import java.util.Locale
 
 class RegisterFragment : Fragment() {
@@ -76,9 +74,9 @@ class RegisterFragment : Fragment() {
             }
             val firstName = firstName?.text.toString()
             val lastName = lastName?.text.toString()
-
+            val pathString = User.AVATAR_LOCATION + emailString
             model.register(emailString, passwordString, firstName, lastName, userImg,
-                context, object : ModelFirebase.RegisterCallback {
+                pathString, context, object : ModelFirebase.RegisterCallback {
                 override fun onSuccess() {
                     Utils.showToast(context, "Successfully signed up")
                     Navigation.findNavController(view).popBackStack()

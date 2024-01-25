@@ -11,15 +11,14 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import com.idz.find_my_dog.Model.Model
 import com.idz.find_my_dog.Model.ModelFirebase
-import com.idz.lecture4_demo3.Model.Model
-import com.idz.lecture4_demo3.Model.User
+import com.idz.find_my_dog.Model.User
 import com.squareup.picasso.Picasso
 import java.util.Locale
 
@@ -74,14 +73,14 @@ class UserDetailsFragment : Fragment() {
         cameraImg?.setOnClickListener { v -> cameraLauncher!!.launch(null) }
 
         model.getUserDetails(object : ModelFirebase.UserDetailsCallback {
-            override fun onSuccess(userDetails: User?) {
-                val myDetails: User? = userDetails
-                if (myDetails?.email != "") {
-                    emailTxt?.setText(myDetails?.email)
-                    firstnameTxt?.setText(myDetails?.firstName)
-                    lastnameTxt?.setText(myDetails?.lastName)
-                    if (myDetails?.userImageUrl != "") {
-                        userImageUrl = myDetails?.userImageUrl.toString()
+            override fun onSuccess(userDetails: User) {
+                val myDetails: User = userDetails
+                if (myDetails.email != "") {
+                    emailTxt?.setText(myDetails.email)
+                    firstnameTxt?.setText(myDetails.firstName)
+                    lastnameTxt?.setText(myDetails.lastName)
+                    if (myDetails.imageUrl != "") {
+                        userImageUrl = myDetails.imageUrl.toString()
                         Picasso.get().load(userImageUrl).into(userImg)
                     }
                 }
@@ -120,7 +119,8 @@ class UserDetailsFragment : Fragment() {
             }
 
             if (userImg?.drawable != null) {
-                model.uploadImage(emailString, userImg, context,
+                val pathString = User.AVATAR_LOCATION + emailString
+                model.uploadImage( userImg,pathString, context,
                     object: ModelFirebase.UploadImageCallback{
                         override fun onSuccess(downloadUrl: String) {
                             setUserDetails(emailString, firstName, lastName, downloadUrl,
