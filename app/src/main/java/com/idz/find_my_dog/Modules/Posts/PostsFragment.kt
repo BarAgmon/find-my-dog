@@ -108,10 +108,12 @@
         }
 
         private fun setupCitiesSearchbarArray(view: View) {
-            this.searchAutoComplete = view.findViewById<AutoCompleteTextView>(R.id.searchAutoCompleteTextView)
+            this.searchAutoComplete = view.findViewById(R.id.searchAutoCompleteTextView)
 
-            // Setup the adapter
-            citiesAdapter = ArrayAdapter<String>(requireContext(), android.R.layout.select_dialog_item, cities)
+            // Setup the adapter - array of cities represented as strings
+            // The Array adapter is the link between the ui to the data.
+            citiesAdapter = ArrayAdapter<String>(requireContext(),
+                android.R.layout.select_dialog_item, cities)
             this.searchAutoComplete?.setAdapter(citiesAdapter)
 
             // Set the item click listener
