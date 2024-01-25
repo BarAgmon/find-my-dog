@@ -1,5 +1,6 @@
 package com.idz.find_my_dog.Modules.Posts
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +10,6 @@ import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 import com.idz.find_my_dog.Model.Model
 import com.idz.find_my_dog.Model.ModelFirebase
 import com.idz.find_my_dog.Model.Post
@@ -17,7 +17,6 @@ import com.idz.find_my_dog.Model.User
 import com.idz.find_my_dog.R
 import com.idz.find_my_dog.Utils
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.util.Date
 import java.util.Locale
 
@@ -68,35 +67,43 @@ class NewPostDialogFragment : DialogFragment() {
             dismiss()
         }
         sendPostButton.setOnClickListener {
-            val context = requireContext()
-            val postTitle = title?.text.toString()
-            val postDetails = details?.text.toString()
-            val post = Post("",postTitle,loggedInUser, getCurrentDateTime(),"",postDetails,loggedInUser.email)
-            if(postTitle == "" || postDetails == ""){
-                Utils.showToast(context, "Please fill all fields")
-            } else if (!this.isImageSet) {
-                Utils.showToast(context, "Please upload an image")
-            }
-            else{
-                var pathString = Post.POST_IMAGE_LOCATION + loggedInUser.email + Utils.getUniqueID()
-                model.uploadImage( image,pathString, context, object: ModelFirebase.UploadImageCallback{
-                        override fun onSuccess(downloadUrl: String) {
-                            post.imageURL = downloadUrl
-                            model.addPost(post, object: ModelFirebase.AddNewPostCallback {
-
-                                override fun onSuccess(){
-                                    Utils.showToast(context, "Posted successfully")
-                                    dismiss()
-                                }
-
-                                override fun onFailure() {
-                                    Utils.showToast(context, "Failed to post. Try again later.")
-                                }
-                            })
-                        }
-                    })
-            }
+            handlePostPublish()
         }
+    }
+
+    private fun handlePostPublish() {
+        val context = requireContext()
+        val postTitle = title?.text.toString()
+        val postDetails = details?.text.toString()
+        val post = Post("", postTitle, loggedInUser, getCurrentDateTime(), "",
+            postDetails, loggedInUser.email)
+        if (postTitle == "" || postDetails == "") {
+            Utils.showToast(context, "Please fill all fields")
+        } else if (!this.isImageSet) {
+            Utils.showToast(context, "Please upload an image")
+        } else {
+            savePost(context, post)
+        }
+    }
+
+    private fun savePost(context: Context, post: Post) {
+        var pathString = Post.POST_IMAGE_LOCATION + loggedInUser.email + Utils.getUniqueID()
+        model.uploadImage(image, pathString, context, object : ModelFirebase.UploadImageCallback {
+            override fun onSuccess(downloadUrl: String) {
+                post.imageURL = downloadUrl
+                model.addPost(post, object : ModelFirebase.AddNewPostCallback {
+
+                    override fun onSuccess() {
+                        Utils.showToast(context, "Posted successfully")
+                        dismiss()
+                    }
+
+                    override fun onFailure() {
+                        Utils.showToast(context, "Failed to post. Try again later.")
+                    }
+                })
+            }
+        })
     }
 
     private fun getCurrentDateTime(): String {
