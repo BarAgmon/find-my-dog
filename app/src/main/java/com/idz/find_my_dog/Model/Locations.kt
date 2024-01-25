@@ -16,7 +16,7 @@ class Locations {
     companion object {
         val instance: Locations by lazy { Locations() }
     }
-    private fun fetchCities(callback: (List<String>) -> Unit) {
+     fun fetchCities(callback: (List<String>) -> Unit) {
         val request = Request.Builder().url(citiesInIsraelUrl).build()
 
         OkHttpClient().newCall(request).enqueue(object : Callback {
@@ -27,6 +27,8 @@ class Locations {
             override fun onResponse(call: Call, response: Response) {
                 response.body?.string()?.let { jsonString ->
                     val cities = parseCitiesFromJson(jsonString)
+                    locations.clear()
+                    locations.addAll(cities)
                     callback(cities)
                 }
             }
@@ -46,12 +48,5 @@ class Locations {
             it.isNotEmpty()  // Filter out any empty city names
         }
         return locationsNamesListEn
-    }
-
-    init {
-        fetchCities { cities ->
-            locations.clear()
-            locations.addAll(cities)
-        }
     }
 }

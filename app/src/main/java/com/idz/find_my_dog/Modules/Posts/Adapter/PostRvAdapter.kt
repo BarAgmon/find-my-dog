@@ -8,7 +8,7 @@ import com.idz.find_my_dog.Modules.Posts.PostsFragment
 import com.idz.find_my_dog.R
 import com.squareup.picasso.Picasso
 
-class PostRvAdapter(private val posts: List<Post>): RecyclerView.Adapter<PostViewHolder>() {
+class PostRvAdapter(private var posts: List<Post>): RecyclerView.Adapter<PostViewHolder>() {
     var listener: PostsFragment.OnPostClickListener? = null
 
     /*
@@ -24,7 +24,10 @@ class PostRvAdapter(private val posts: List<Post>): RecyclerView.Adapter<PostVie
 
         return PostViewHolder(postView, listener, posts)
     }
-
+    fun updatePosts(newPostsList: List<Post>){
+        posts = newPostsList
+        notifyDataSetChanged()
+    }
     override fun getItemCount(): Int {
         return posts.size ?: 0
     }
