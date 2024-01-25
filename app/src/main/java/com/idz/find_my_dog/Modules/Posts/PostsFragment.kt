@@ -55,24 +55,48 @@
                     }
                 }
             }
-            model.getAllPosts {
-                this.posts = it
-                this.postRvAdapter = PostRvAdapter(posts)
-                this.postRvAdapter?.listener = object : OnPostClickListener {
-
-                    override fun onItemClick(position: Int) {
-                        val clickedPost = posts[position]
-                        clickedPost.let { post ->
-                            val action = PostsFragmentDirections.actionPostsFragmentToPostDetailsFragment(post)
-                            Navigation.findNavController(view).navigate(action)
-                        }
-                    }
-                }
-                postsListRv?.adapter = this.postRvAdapter
-                this.postRvAdapter?.updatePosts(posts)
+            if (!args.isUserPostsOnly){
+                getAllPosts(view)
+            } else {
+                getCurrUserPosts(view)
             }
 
             return view
+        }
+        private fun setupPostRecyclerView(posts: List<Post>, view: View) {
+            this.postRvAdapter = PostRvAdapter(posts).apply {
+                listener = object : OnPostClickListener {
+                    override fun onItemClick(position: Int) {
+                        handlePostClicked(position, view)
+                    }
+                }
+            }
+            postsListRv?.adapter = this.postRvAdapter
+            this.postRvAdapter?.updatePosts(posts)
+        }
+        private fun getAllPosts(view: View) {
+            model.getAllPosts { posts ->
+                this.posts = posts
+                setupPostRecyclerView(posts, view)
+            }
+        }
+
+        private fun getCurrUserPosts(view: View) {
+            model.getCurrUserPosts { posts ->
+                this.posts = posts
+                setupPostRecyclerView(posts, view)
+            }
+        }
+
+        private fun handlePostClicked(position: Int, view: View) {
+            val clickedPost = posts[position]
+            clickedPost.let { post ->
+                val action =
+                    PostsFragmentDirections.actionPostsFragmentToPostDetailsFragment(
+                        post
+                    )
+                Navigation.findNavController(view).navigate(action)
+            }
         }
 
         private fun setupUI(view: View) {
