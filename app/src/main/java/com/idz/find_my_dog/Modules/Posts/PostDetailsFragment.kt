@@ -56,7 +56,7 @@ class PostDetailsFragment : Fragment() {
                     "?subject=${Uri.encode(subject)}" +
                     "&body=${Uri.encode(body)}"
 
-            val emailIntent = Intent(Intent.ACTION_SEND).apply {
+            val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
                 data = Uri.parse(mailto)
             }
 
