@@ -30,8 +30,8 @@ class NewPostDialogFragment : DialogFragment() {
     private var title: TextInputEditText? = null
     private var details: TextInputEditText? = null
     private lateinit var image: ImageView
-    private lateinit var sendPostButton : ImageView
-    private lateinit var cancelButton : ImageView
+    private lateinit var sendPostButton: ImageView
+    private lateinit var cancelButton: ImageView
     private lateinit var loggedInUser: User
     private var citiesAutoComplete: AutoCompleteTextView? = null
     private var citiesAdapter: ArrayAdapter<String>? = null
@@ -43,10 +43,11 @@ class NewPostDialogFragment : DialogFragment() {
         try {
             this.image.setImageURI(galleryUri)
             this.isImageSet = true
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -64,7 +65,7 @@ class NewPostDialogFragment : DialogFragment() {
         return view
     }
 
-    private fun setupUI(view: View){
+    private fun setupUI(view: View) {
         this.sendPostButton = view.findViewById(R.id.send_new_post)
         this.cancelButton = view.findViewById(R.id.cancel_new_post)
         this.title = view.findViewById(R.id.new_post_title)
@@ -79,7 +80,7 @@ class NewPostDialogFragment : DialogFragment() {
             }
         })
 
-        image.setOnClickListener{
+        image.setOnClickListener {
             val imageMimeType = "image/*"
             galleryLauncher.launch(imageMimeType)
         }
@@ -90,22 +91,27 @@ class NewPostDialogFragment : DialogFragment() {
             handlePostPublish()
         }
     }
-    private fun setupCitiesList(){
-        this.citiesAdapter = ArrayAdapter(requireContext(),
-            android.R.layout.select_dialog_item, this.cities)
+
+    private fun setupCitiesList() {
+        this.citiesAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.select_dialog_item, this.cities
+        )
         this.citiesAutoComplete?.setAdapter(citiesAdapter)
         this.citiesAutoComplete?.setOnItemClickListener { parent, _, position, _ ->
             val selectedCity = parent.adapter.getItem(position) as String
-                this.chosenCity = selectedCity
+            this.chosenCity = selectedCity
         }
         this.citiesAutoComplete?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(typedString: Editable) {
-                    citiesAdapter?.filter?.filter(typedString)
-                }
+                citiesAdapter?.filter?.filter(typedString)
+            }
+
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
         })
     }
+
     private fun handlePostPublish() {
         val context = requireContext()
         val postTitle = title?.text.toString()
@@ -115,8 +121,10 @@ class NewPostDialogFragment : DialogFragment() {
         } else if (!this.isImageSet) {
             Utils.showToast(context, "Please upload an image")
         } else {
-            val post = Post("", postTitle, loggedInUser, getCurrentDateTime(),
-                this.chosenCity, postDetails, loggedInUser.email)
+            val post = Post(
+                "", postTitle, loggedInUser, getCurrentDateTime(),
+                this.chosenCity, postDetails, loggedInUser.email
+            )
             savePost(context, post)
         }
     }
@@ -145,6 +153,7 @@ class NewPostDialogFragment : DialogFragment() {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ROOT)
         return dateFormat.format(Date())
     }
+
     override fun onStart() {
         super.onStart()
         dialog?.window?.apply {

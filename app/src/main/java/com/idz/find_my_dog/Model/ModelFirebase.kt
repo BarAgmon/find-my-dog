@@ -30,7 +30,7 @@ class ModelFirebase {
     private var auth: FirebaseAuth = Firebase.auth
     private var storage: FirebaseStorage = Firebase.storage
 
-    companion object{
+    companion object {
         const val POSTS_COLLECTION_NAME = "posts"
         const val USERS_COLLECTION_NAME = "users"
     }
@@ -44,9 +44,11 @@ class ModelFirebase {
         }
         db.firestoreSettings = settings
     }
+
     interface RegisterCallback {
         fun onSuccess()
     }
+
     interface LoginCallback {
         fun onSuccess(user: FirebaseUser?)
     }
@@ -69,12 +71,15 @@ class ModelFirebase {
         fun onFailure()
     }
 
-    interface getPostsByLocationCallback{
+    interface getPostsByLocationCallback {
         fun onSuccess(postsByLocation: List<Post>)
         fun onFailure()
     }
-    fun setUserDetails(email: String, firstName: String, lastName: String, imageUrl: String,
-                       callback: SetUserDetailsCallback){
+
+    fun setUserDetails(
+        email: String, firstName: String, lastName: String, imageUrl: String,
+        callback: SetUserDetailsCallback
+    ) {
         val jsonReview: MutableMap<String, Any> = HashMap()
         jsonReview["firstName"] = firstName
         jsonReview["lastName"] = lastName
@@ -85,9 +90,9 @@ class ModelFirebase {
         db.collection(USERS_COLLECTION_NAME)
             .document(email)
             .set(jsonReview)
-            .addOnSuccessListener {
-                success -> callback.onSuccess()
-            }.addOnFailureListener{
+            .addOnSuccessListener { success ->
+                callback.onSuccess()
+            }.addOnFailureListener {
                 callback.onFailure()
             }
     }
@@ -101,8 +106,10 @@ class ModelFirebase {
      * @param pathString: The path on db which the image will be saved.
      * @param callback: An instance of UploadImageCallback.
      */
-    fun uploadImage(imgView: ImageView?, context: Context, pathString: String,
-                    callback: UploadImageCallback) {
+    fun uploadImage(
+        imgView: ImageView?, context: Context, pathString: String,
+        callback: UploadImageCallback
+    ) {
         // The image from imgView is extracted as a Bitmap.
         val bitmap = (imgView?.drawable as BitmapDrawable).bitmap
         val baos = ByteArrayOutputStream()
@@ -125,8 +132,10 @@ class ModelFirebase {
         }
     }
 
-    fun register(email: String, password: String, context: Context,
-                 callback: ModelFirebase.RegisterCallback) {
+    fun register(
+        email: String, password: String, context: Context,
+        callback: ModelFirebase.RegisterCallback
+    ) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -155,6 +164,7 @@ class ModelFirebase {
     fun getLoggedInUserEmail(): String? {
         return auth.currentUser!!.email
     }
+
     fun getUserDetails(callback: UserDetailsCallback) {
         val email = getLoggedInUserEmail()
         if (email != null) {
@@ -187,21 +197,24 @@ class ModelFirebase {
         auth.signOut()
     }
 
-    fun getAllPosts(callback: (List<Post>) -> Unit){
-        db.collection(POSTS_COLLECTION_NAME).orderBy(Post.DATE, Query.Direction.DESCENDING).get().addOnCompleteListener {
-            when (it.isSuccessful) {
-                true -> {
-                    val posts: MutableList<Post> = mutableListOf()
-                    for (json in it.result) {
-                        val post = Post.fromJSON(json.data)
-                        posts.add(post)
+    fun getAllPosts(callback: (List<Post>) -> Unit) {
+        db.collection(POSTS_COLLECTION_NAME).orderBy(Post.DATE, Query.Direction.DESCENDING).get()
+            .addOnCompleteListener {
+                when (it.isSuccessful) {
+                    true -> {
+                        val posts: MutableList<Post> = mutableListOf()
+                        for (json in it.result) {
+                            val post = Post.fromJSON(json.data)
+                            posts.add(post)
+                        }
+                        callback(posts)
                     }
-                    callback(posts)
-                }
-                false -> callback(listOf())
+
+                    false -> callback(listOf())
                 }
             }
-        }
+    }
+
     fun addPost(post: Post, callback: AddNewPostCallback) {
         db.collection(POSTS_COLLECTION_NAME).add(post.json).addOnSuccessListener {
             callback.onSuccess()
@@ -210,7 +223,7 @@ class ModelFirebase {
         }
     }
 
-    fun getPost(callback: (List<Post>) -> Unit, postId: String){
+    fun getPost(callback: (List<Post>) -> Unit, postId: String) {
         val currUserEmail = auth.currentUser!!.email
         db.collection(POSTS_COLLECTION_NAME).whereEqualTo(Post.ID, postId)
             .get().addOnCompleteListener {
@@ -223,12 +236,13 @@ class ModelFirebase {
                         }
                         callback(posts)
                     }
+
                     false -> callback(listOf())
                 }
             }
     }
 
-    fun getPostsByLocation(location: String, callback: getPostsByLocationCallback){
+    fun getPostsByLocation(location: String, callback: getPostsByLocationCallback) {
         db.collection(POSTS_COLLECTION_NAME).whereEqualTo(Post.LOCATION, location)
             .get().addOnCompleteListener {
                 val posts: MutableList<Post> = mutableListOf()
@@ -241,31 +255,33 @@ class ModelFirebase {
                 callback.onFailure()
             }
     }
-    fun getCurrUserPosts(callback: (List<Post>) -> Unit){
+
+    fun getCurrUserPosts(callback: (List<Post>) -> Unit) {
         val currUserEmail = auth.currentUser!!.email
         db.collection(POSTS_COLLECTION_NAME).whereEqualTo(Post.PUBLISHER_EMAIL_ID, currUserEmail)
             .get().addOnCompleteListener {
-            when (it.isSuccessful) {
-                true -> {
-                    val posts: MutableList<Post> = mutableListOf()
-                    for (json in it.result) {
-                        val post = Post.fromJSON(json.data)
-                        posts.add(post)
+                when (it.isSuccessful) {
+                    true -> {
+                        val posts: MutableList<Post> = mutableListOf()
+                        for (json in it.result) {
+                            val post = Post.fromJSON(json.data)
+                            posts.add(post)
+                        }
+                        callback(posts)
                     }
-                    callback(posts)
+
+                    false -> callback(listOf())
                 }
-                false -> callback(listOf())
             }
-        }
     }
 
-    fun setPost(newPost : Post, callback: SetUserDetailsCallback){
+    fun setPost(newPost: Post, callback: SetUserDetailsCallback) {
         db.collection(POSTS_COLLECTION_NAME)
             .document(newPost.id)
             .set(newPost.json)
-            .addOnSuccessListener {
-                    success -> callback.onSuccess()
-            }.addOnFailureListener{
+            .addOnSuccessListener { success ->
+                callback.onSuccess()
+            }.addOnFailureListener {
                 callback.onFailure()
             }
     }
