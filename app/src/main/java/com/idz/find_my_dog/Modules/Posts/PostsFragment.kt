@@ -22,6 +22,7 @@ import com.idz.find_my_dog.Model.ModelFirebase
 import com.idz.find_my_dog.Model.Post
 import com.idz.find_my_dog.Modules.Posts.Adapter.PostRvAdapter
 import com.idz.find_my_dog.R
+import kotlinx.coroutines.delay
 
 class PostsFragment : Fragment() {
 
