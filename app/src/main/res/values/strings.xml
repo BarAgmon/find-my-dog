@@ -26,4 +26,8 @@
     <string name="title">Title</string>
     <string name="send_email" />
     <string name="location">Location</string>
+    <string name="explore" />
+    <string name="profile" />
+    <string name="posts" />
+    <string name="logout" />
 </resources>
