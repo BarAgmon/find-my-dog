@@ -176,4 +176,18 @@
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         app:srcCompat="@drawable/sendmail" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/post_details_edit_post"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#C4AD3FB5"
+        android:clickable="true"
+        android:contentDescription="@string/send_email"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:visibility="gone"
+        app:srcCompat="@drawable/edit" />
 </androidx.constraintlayout.widget.ConstraintLayout>
