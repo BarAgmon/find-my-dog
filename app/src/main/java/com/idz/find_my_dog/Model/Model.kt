@@ -67,6 +67,10 @@ class Model private constructor() {
     fun addPost(post: Post, callback: ModelFirebase.AddNewPostCallback){
         modelFirebase.addPost(post,callback)
     }
+
+    fun setPost(newPost: Post, callback: ModelFirebase.SetPostCallback){
+        modelFirebase.setPost(newPost,callback)
+    }
     fun getPostsByLocation(location: String, callback: ModelFirebase.getPostsByLocationCallback) {
         modelFirebase.getPostsByLocation(location,callback)
     }

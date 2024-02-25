@@ -11,6 +11,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textview.MaterialTextView
@@ -66,7 +67,9 @@ class PostDetailsFragment : Fragment() {
                     editPostButton?.visibility=View.VISIBLE
                     sendEmailButton?.visibility=View.GONE
                     editPostButton?.setOnClickListener{
-                        title?.isEnabled = true;
+                        val action =
+                            PostDetailsFragmentDirections.actionPostDetailsFragmentToEditPostDialogFragment(args.post)
+                            Navigation.findNavController(view).navigate(action)
                     }
                 } else{
                     setSendMailButtonCLickListener()

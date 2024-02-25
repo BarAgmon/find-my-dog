@@ -13,26 +13,24 @@ import android.widget.AutoCompleteTextView
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.DialogFragment
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.textfield.TextInputEditText
 import com.idz.find_my_dog.Model.Locations
 import com.idz.find_my_dog.Model.Model
 import com.idz.find_my_dog.Model.ModelFirebase
 import com.idz.find_my_dog.Model.Post
-import com.idz.find_my_dog.Model.User
 import com.idz.find_my_dog.R
 import com.idz.find_my_dog.Utils
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import com.squareup.picasso.Picasso
 
-class NewPostDialogFragment : DialogFragment() {
+class EditPostDialogFragment : DialogFragment() {
+    private val args : EditPostDialogFragmentArgs by navArgs()
     private var model: Model = Model.instance
     private var title: TextInputEditText? = null
     private var details: TextInputEditText? = null
     private lateinit var image: ImageView
-    private lateinit var sendPostButton: ImageView
+    private lateinit var setPostButton: ImageView
     private lateinit var cancelButton: ImageView
-    private lateinit var loggedInUser: User
     private var citiesAutoComplete: AutoCompleteTextView? = null
     private var citiesAdapter: ArrayAdapter<String>? = null
     private lateinit var cities: List<String>
@@ -66,20 +64,17 @@ class NewPostDialogFragment : DialogFragment() {
     }
 
     private fun setupUI(view: View) {
-        this.sendPostButton = view.findViewById(R.id.send_new_post)
+        this.setPostButton = view.findViewById(R.id.send_new_post)
         this.cancelButton = view.findViewById(R.id.cancel_new_post)
         this.title = view.findViewById(R.id.new_post_title)
         this.details = view.findViewById(R.id.new_post_details)
         this.image = view.findViewById(R.id.new_post_img)
         this.citiesAutoComplete = view.findViewById(R.id.new_post_locations_menu)
-
-        model.getUserDetails(object : ModelFirebase.UserDetailsCallback {
-
-            override fun onSuccess(userDetails: User) {
-                loggedInUser = userDetails
-            }
-        })
-
+        this.title?.setText(args.post.title)
+        this.details?.setText(args.post.description)
+        this.chosenCity = args.post.location
+        this.citiesAutoComplete?.setText(args.post.location)
+        Picasso.get().load(args.post.imageURL).into(this.image);
         image.setOnClickListener {
             val imageMimeType = "image/*"
             galleryLauncher.launch(imageMimeType)
@@ -87,15 +82,15 @@ class NewPostDialogFragment : DialogFragment() {
         cancelButton.setOnClickListener {
             dismiss()
         }
-        sendPostButton.setOnClickListener {
-            handlePostPublish()
+        setPostButton.setOnClickListener {
+            handleSetPost()
         }
     }
 
     private fun setupCitiesList() {
         this.citiesAdapter = ArrayAdapter(
             requireContext(),
-             android.R.layout.select_dialog_item, this.cities
+            android.R.layout.select_dialog_item, this.cities
         )
         this.citiesAutoComplete?.setAdapter(citiesAdapter)
         this.citiesAutoComplete?.setOnItemClickListener { parent, _, position, _ ->
@@ -112,47 +107,56 @@ class NewPostDialogFragment : DialogFragment() {
         })
     }
 
-    private fun handlePostPublish() {
+    private fun handleSetPost() {
         val context = requireContext()
         val postTitle = title?.text.toString()
         val postDetails = details?.text.toString()
         if (postTitle == "" || postDetails == "" || this.chosenCity == "") {
             Utils.showToast(context, "Please fill all fields")
-        } else if (!this.isImageSet) {
-            Utils.showToast(context, "Please upload an image")
         } else {
-            val post = Post(
-                "", postTitle, loggedInUser, getCurrentDateTime(),
-                this.chosenCity, postDetails, loggedInUser.email
-            )
-            savePost(context, post)
+            val post = Post( args.post.id,  args.post.imageURL, postTitle,
+                args.post.publisher, args.post.date,
+                this.chosenCity, postDetails, args.post.publisherEmailId)
+            setPost(context, post)
         }
     }
 
-    private fun savePost(context: Context, post: Post) {
-        var pathString = Post.POST_IMAGE_LOCATION + loggedInUser.email + Utils.getUniqueID()
-        model.uploadImage(image, pathString, context, object : ModelFirebase.UploadImageCallback {
-            override fun onSuccess(downloadUrl: String) {
-                post.imageURL = downloadUrl
-                model.addPost(post, object : ModelFirebase.AddNewPostCallback {
+    private fun setPost(context: Context, post: Post) {
+        if(isImageSet) {
+            var pathString = Post.POST_IMAGE_LOCATION +
+                    args.post.publisherEmailId + Utils.getUniqueID()
+            model.uploadImage(image, pathString, context, object : ModelFirebase.UploadImageCallback {
+                override fun onSuccess(downloadUrl: String) {
+                    post.imageURL = downloadUrl
 
-                    override fun onSuccess() {
-                        Utils.showToast(context, "Posted successfully")
-                        dismiss()
-                    }
+                    model.setPost(post, object : ModelFirebase.SetPostCallback {
 
-                    override fun onFailure() {
-                        Utils.showToast(context, "Failed to post. Try again later.")
-                    }
-                })
-            }
-        })
+                        override fun onSuccess() {
+                            Utils.showToast(context, "Post set successfully")
+                            dismiss()
+                        }
+
+                        override fun onFailure() {
+                            Utils.showToast(context, "Failed to set post. please try again later.")
+                        }
+                    })
+                }
+            })
+        } else {
+            model.setPost(post, object : ModelFirebase.SetPostCallback {
+
+                override fun onSuccess() {
+                    Utils.showToast(context, "Post set successfully")
+                    dismiss()
+                }
+
+                override fun onFailure() {
+                    Utils.showToast(context, "Failed to set post. please try again later.")
+                }
+            })
+        }
     }
 
-    private fun getCurrentDateTime(): String {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ROOT)
-        return dateFormat.format(Date())
-    }
 
     override fun onStart() {
         super.onStart()

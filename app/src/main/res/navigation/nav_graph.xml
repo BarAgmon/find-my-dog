@@ -53,13 +53,25 @@
         android:id="@+id/postDetailsFragment"
         android:name="com.idz.find_my_dog.Modules.Posts.PostDetailsFragment"
         tools:layout="@layout/fragment_post_details">
+        <action
+            android:id="@+id/action_postDetailsFragment_to_editPostDialogFragment"
+            app:destination="@id/editPostDialogFragment"/>
         <argument
             android:name="post"
             app:argType="com.idz.find_my_dog.Model.Post" />
     </fragment>
     <dialog
+        android:id="@+id/editPostDialogFragment"
+        android:name="com.idz.find_my_dog.Modules.Posts.EditPostDialogFragment"
+        tools:layout="@layout/add_and_edit_post_card"
+        >
+        <argument
+            android:name="post"
+            app:argType="com.idz.find_my_dog.Model.Post" />
+    </dialog>
+    <dialog
         android:id="@+id/newPostDialogFragment"
         android:name="com.idz.find_my_dog.Modules.Posts.NewPostDialogFragment"
-        tools:layout="@layout/fragment_add_new_post"
+        tools:layout="@layout/add_and_edit_post_card"
         android:label="New Post" />
 </navigation>
