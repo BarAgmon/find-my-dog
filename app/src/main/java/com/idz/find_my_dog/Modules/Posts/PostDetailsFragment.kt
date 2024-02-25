@@ -14,12 +14,16 @@ import android.widget.TextView
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textview.MaterialTextView
+import com.idz.find_my_dog.Model.Model
+import com.idz.find_my_dog.Model.ModelFirebase
+import com.idz.find_my_dog.Model.User
 import com.idz.find_my_dog.R
 import com.idz.find_my_dog.Utils
 import com.squareup.picasso.Picasso
 
 class PostDetailsFragment : Fragment() {
     private val args : PostDetailsFragmentArgs by navArgs()
+    private var model: Model = Model.instance
     var dogPostImg: ImageView? = null
     var dogPostPublisherImg: ImageView? = null
     var publisherName: TextView? = null
@@ -28,6 +32,8 @@ class PostDetailsFragment : Fragment() {
     var title: TextView? = null
     var description: MaterialTextView? = null
     var sendEmailButton: FloatingActionButton? = null
+    var editPostButton: FloatingActionButton? = null
+    private lateinit var loggedInUser: User
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -44,13 +50,36 @@ class PostDetailsFragment : Fragment() {
         this.publishDate = view.findViewById(R.id.post_details_publish_date)
         this.location = view.findViewById(R.id.post_details_location)
         this.description = view.findViewById(R.id.post_details_description)
-        this.sendEmailButton = view.findViewById(R.id.post_details_send_mail)
         this.title = view.findViewById(R.id.post_details_title)
+        showAndInitEditOrSendMailButton(view)
+    }
 
+    // Showing edit button if the user is the post author, and send button if not.
+    private fun showAndInitEditOrSendMailButton(view: View) {
+        this.sendEmailButton = view.findViewById(R.id.post_details_send_mail)
+        this.editPostButton = view.findViewById(R.id.post_details_edit_post)
+        model.getUserDetails(object : ModelFirebase.UserDetailsCallback {
+
+            override fun onSuccess(userDetails: User) {
+                loggedInUser = userDetails
+                if(loggedInUser.email == args.post.publisherEmailId){
+                    editPostButton?.visibility=View.VISIBLE
+                    sendEmailButton?.visibility=View.GONE
+                    editPostButton?.setOnClickListener{
+                        title?.isEnabled = true;
+                    }
+                } else{
+                    setSendMailButtonCLickListener()
+                }
+            }
+        })
+    }
+
+    private fun setSendMailButtonCLickListener() {
         this.sendEmailButton?.setOnClickListener {
             val recipient = args.post.publisherEmailId
             val subject = "Your post on `Find my dog` app"
-            val body = "Hi "+ args.post.publisher.firstName +
+            val body = "Hi " + args.post.publisher.firstName +
                     ", I would like to get more information about your post: " + args.post.title
             val mailto = "mailto:$recipient" +
                     "?subject=${Uri.encode(subject)}" +
@@ -62,11 +91,10 @@ class PostDetailsFragment : Fragment() {
 
             try {
                 startActivity(emailIntent)
-            } catch (e : Exception) {
+            } catch (e: Exception) {
                 Utils.showToast(requireContext(), "No email app available")
             }
         }
-
     }
 
     private fun adaptPostData(){

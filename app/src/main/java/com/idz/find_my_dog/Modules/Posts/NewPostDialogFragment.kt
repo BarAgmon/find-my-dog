@@ -95,7 +95,7 @@ class NewPostDialogFragment : DialogFragment() {
     private fun setupCitiesList() {
         this.citiesAdapter = ArrayAdapter(
             requireContext(),
-            android.R.layout.select_dialog_item, this.cities
+             android.R.layout.select_dialog_item, this.cities
         )
         this.citiesAutoComplete?.setAdapter(citiesAdapter)
         this.citiesAutoComplete?.setOnItemClickListener { parent, _, position, _ ->
