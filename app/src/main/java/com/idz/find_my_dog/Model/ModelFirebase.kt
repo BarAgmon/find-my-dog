@@ -70,6 +70,11 @@ class ModelFirebase {
         fun onFailure()
     }
 
+    interface SetPostCallback {
+        fun onSuccess()
+        fun onFailure()
+    }
+
     interface getPostsByLocationCallback {
         fun onSuccess(postsByLocation: List<Post>)
         fun onFailure()
@@ -274,7 +279,7 @@ class ModelFirebase {
             }
     }
 
-    fun setPost(newPost: Post, callback: SetUserDetailsCallback) {
+    fun setPost(newPost: Post, callback: SetPostCallback) {
         db.collection(POSTS_COLLECTION_NAME)
             .document(newPost.id)
             .set(newPost.json)
