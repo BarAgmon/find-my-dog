@@ -209,6 +209,7 @@ class ModelFirebase {
                         val posts: MutableList<Post> = mutableListOf()
                         for (json in it.result) {
                             val post = Post.fromJSON(json.data)
+                            post.id = json.id
                             posts.add(post)
                         }
                         callback(posts)

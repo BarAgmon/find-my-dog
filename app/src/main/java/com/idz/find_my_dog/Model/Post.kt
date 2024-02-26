@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 
 @Entity
 @Parcelize
-data class Post (@PrimaryKey val id: String = "",
+data class Post (@PrimaryKey var id: String = "",
                  var imageURL: String,
                  val title: String,
                  val publisher: User,
