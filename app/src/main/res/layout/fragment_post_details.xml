@@ -11,8 +11,6 @@
         android:id="@+id/post_details_card"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clickable="true"
-        android:focusable="true"
         android:transitionName="@string/post_card_detail_transition_name"
         android:visibility="visible"
         app:cardCornerRadius="8dp"
@@ -32,7 +30,13 @@
             app:flexDirection="column"
             app:flexWrap="nowrap"
             app:justifyContent="flex_start">
-
+            <com.google.android.flexbox.FlexboxLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:flexDirection="row"
+                app:justifyContent="space_between"
+                app:alignItems="center"
+                >
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -44,7 +48,17 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
                 />
-
+                <ImageView
+                    android:id="@+id/delete_post_btn"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:src="@drawable/delete"
+                    android:visibility="gone"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="10dp"/>
+            </com.google.android.flexbox.FlexboxLayout>
             <ImageView
                 android:id="@+id/post_details_dog_image"
                 android:layout_width="match_parent"

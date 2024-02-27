@@ -1,6 +1,5 @@
 package com.idz.find_my_dog.Modules.Posts
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -21,6 +20,8 @@ import com.idz.find_my_dog.Model.User
 import com.idz.find_my_dog.R
 import com.idz.find_my_dog.Utils
 import com.squareup.picasso.Picasso
+import android.content.DialogInterface
+import androidx.appcompat.app.AlertDialog
 
 class PostDetailsFragment : Fragment() {
     private val args : PostDetailsFragmentArgs by navArgs()
@@ -34,6 +35,7 @@ class PostDetailsFragment : Fragment() {
     var description: MaterialTextView? = null
     var sendEmailButton: FloatingActionButton? = null
     var editPostButton: FloatingActionButton? = null
+    var delPostBtn: ImageView? = null
     private lateinit var loggedInUser: User
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,13 +54,14 @@ class PostDetailsFragment : Fragment() {
         this.location = view.findViewById(R.id.post_details_location)
         this.description = view.findViewById(R.id.post_details_description)
         this.title = view.findViewById(R.id.post_details_title)
-        showAndInitEditOrSendMailButton(view)
+        showAndInitEditAndDelOrSendMailButton(view)
     }
 
     // Showing edit button if the user is the post author, and send button if not.
-    private fun showAndInitEditOrSendMailButton(view: View) {
+    private fun showAndInitEditAndDelOrSendMailButton(view: View) {
         this.sendEmailButton = view.findViewById(R.id.post_details_send_mail)
         this.editPostButton = view.findViewById(R.id.post_details_edit_post)
+        this.delPostBtn = view.findViewById(R.id.delete_post_btn)
         model.getUserDetails(object : ModelFirebase.UserDetailsCallback {
 
             override fun onSuccess(userDetails: User) {
@@ -66,16 +69,45 @@ class PostDetailsFragment : Fragment() {
                 if(loggedInUser.email == args.post.publisherEmailId){
                     editPostButton?.visibility=View.VISIBLE
                     sendEmailButton?.visibility=View.GONE
+                    delPostBtn?.visibility=View.VISIBLE
                     editPostButton?.setOnClickListener{
-                        val action =
-                            PostDetailsFragmentDirections.actionPostDetailsFragmentToEditPostDialogFragment(args.post)
+                        val action = PostDetailsFragmentDirections.actionPostDetailsFragmentToEditPostDialogFragment(args.post)
                             Navigation.findNavController(view).navigate(action)
                     }
+                    setDeleteButtonClickListener()
                 } else{
                     setSendMailButtonCLickListener()
                 }
             }
         })
+    }
+    private fun setDeleteButtonClickListener() {
+        this.delPostBtn?.setOnClickListener {
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle("Delete Post")
+            builder.setMessage("Are you sure you want to delete this post?")
+
+            builder.setPositiveButton("Delete") { _, _ ->
+                model.deletePost(args.post, object : ModelFirebase.DeletePostCallback {
+                    override fun onSuccess() {
+                        Utils.showToast(requireContext(), "Post deleted successfully")
+                        Navigation.findNavController(requireView()).popBackStack()
+                    }
+
+                    override fun onFailure() {
+                        Utils.showToast(requireContext(), "Failed to delete post")
+                    }
+                })
+            }
+
+            builder.setNegativeButton("Cancel") { dialog, which ->
+                dialog.dismiss()
+            }
+
+            val alertDialog: AlertDialog = builder.create()
+            alertDialog.setCancelable(false)
+            alertDialog.show()
+        }
     }
 
     private fun setSendMailButtonCLickListener() {
