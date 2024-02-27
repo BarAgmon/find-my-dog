@@ -66,6 +66,11 @@ class ModelFirebase {
         fun onSuccess(downloadUrl: String)
     }
 
+    interface DeletePostCallback {
+        fun onSuccess()
+        fun onFailure()
+    }
+
     interface AddNewPostCallback {
         fun onSuccess()
         fun onFailure()
@@ -285,6 +290,17 @@ class ModelFirebase {
         db.collection(POSTS_COLLECTION_NAME)
             .document(newPost.id)
             .set(newPost.json)
+            .addOnSuccessListener { success ->
+                callback.onSuccess()
+            }.addOnFailureListener {
+                callback.onFailure()
+            }
+    }
+
+    fun deletePost(postToDelete: Post, callback: DeletePostCallback) {
+        db.collection(POSTS_COLLECTION_NAME)
+            .document(postToDelete.id)
+            .delete()
             .addOnSuccessListener { success ->
                 callback.onSuccess()
             }.addOnFailureListener {

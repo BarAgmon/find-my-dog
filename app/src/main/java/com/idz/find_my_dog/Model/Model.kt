@@ -78,4 +78,8 @@ class Model private constructor() {
     fun getCurrUserPosts(callback: (List<Post>) -> Unit) {
         modelFirebase.getCurrUserPosts(callback)
     }
+
+    fun deletePost(post: Post,callback: ModelFirebase.DeletePostCallback){
+        modelFirebase.deletePost(post,callback)
+    }
 }
