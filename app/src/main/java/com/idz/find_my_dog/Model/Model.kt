@@ -8,18 +8,18 @@ import java.util.concurrent.Executors
 
 class Model private constructor() {
     private var modelFirebase: ModelFirebase = ModelFirebase()
-    private var loadingState = MutableLiveData<LoadingState>()
+//    private var loadingState = MutableLiveData<LoadingState>()
     companion object {
         val instance: Model = Model()
     }
-    init {
-        loadingState.value = LoadingState.loaded
-    }
-
-    enum class LoadingState {
-        loading,
-        loaded
-    }
+//    init {
+//        loadingState.value = LoadingState.loaded
+//    }
+//
+//    enum class LoadingState {
+//        loading,
+//        loaded
+//    }
     fun register(email: String, password: String, firstName: String, lastName: String,
                  userImg: ImageView?, pathString: String, context: Context,
                  callback: ModelFirebase.RegisterCallback) {
