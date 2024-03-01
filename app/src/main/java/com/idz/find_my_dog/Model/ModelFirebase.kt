@@ -39,8 +39,6 @@ class ModelFirebase {
         val settings = firestoreSettings {
             // Use memory cache
             setLocalCacheSettings(memoryCacheSettings {})
-            // Use persistent disk cache (default)
-            setLocalCacheSettings(persistentCacheSettings {})
         }
         db.firestoreSettings = settings
     }
