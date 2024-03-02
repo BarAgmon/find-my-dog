@@ -4,9 +4,11 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
+import android.util.Log
 import android.widget.ImageView
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
@@ -50,6 +52,7 @@ class ModelFirebase {
     interface LoginCallback {
         fun onSuccess(user: FirebaseUser?)
     }
+
     interface UserDetailsCallback {
         fun onSuccess(userDetails: User)
     }
@@ -204,8 +207,9 @@ class ModelFirebase {
         auth.signOut()
     }
 
-    fun getAllPosts(callback: (List<Post>) -> Unit) {
-        db.collection(POSTS_COLLECTION_NAME).orderBy(Post.DATE, Query.Direction.DESCENDING).get()
+    fun getAllPosts(fromTime: Long, callback: (List<Post>) -> Unit) {
+        db.collection(POSTS_COLLECTION_NAME)
+            .whereGreaterThanOrEqualTo(Post.LAST_UPDATED, Timestamp(fromTime, 0)).get()
             .addOnCompleteListener {
                 when (it.isSuccessful) {
                     true -> {

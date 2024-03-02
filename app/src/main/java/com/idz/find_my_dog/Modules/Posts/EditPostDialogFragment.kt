@@ -132,6 +132,7 @@ class EditPostDialogFragment : DialogFragment() {
                     model.setPost(post, object : ModelFirebase.SetPostCallback {
 
                         override fun onSuccess() {
+                            model.refreshAllPosts()
                             Utils.showToast(context, "Post set successfully")
                             dismiss()
                         }
@@ -146,6 +147,7 @@ class EditPostDialogFragment : DialogFragment() {
             model.setPost(post, object : ModelFirebase.SetPostCallback {
 
                 override fun onSuccess() {
+                    model.refreshAllPosts()
                     Utils.showToast(context, "Post set successfully")
                     dismiss()
                 }

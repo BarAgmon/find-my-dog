@@ -22,13 +22,12 @@ import com.idz.find_my_dog.Model.ModelFirebase
 import com.idz.find_my_dog.Model.Post
 import com.idz.find_my_dog.Modules.Posts.Adapter.PostRvAdapter
 import com.idz.find_my_dog.R
-import kotlinx.coroutines.delay
+import androidx.lifecycle.ViewModelProvider
 
 class PostsFragment : Fragment() {
 
     private var postsListRv: RecyclerView? = null
     private lateinit var progressBar: ImageView
-    lateinit var posts: List<Post>
     private var newPostButton: FloatingActionButton? = null
     private var model: Model = Model.instance
     private val args: PostsFragmentArgs by navArgs()
@@ -36,6 +35,7 @@ class PostsFragment : Fragment() {
     private var citiesAdapter: ArrayAdapter<String>? = null
     private lateinit var cities: List<String>
     private var postRvAdapter: PostRvAdapter? = null
+    private lateinit var postsViewModel: PostsViewModel
 
     interface OnPostClickListener {
         fun onItemClick(position: Int)
@@ -46,6 +46,7 @@ class PostsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_posts_list, container, false)
+        postsViewModel = ViewModelProvider(this)[PostsViewModel::class.java]
         setupUI(view)
         Locations.instance.fetchCities { cities ->
             // We are updating the UI inside the setupCitiesSearchbarArray, which needed to
@@ -65,7 +66,10 @@ class PostsFragment : Fragment() {
         } else {
             getCurrUserPosts(view)
         }
-
+        postsViewModel.posts.observe(viewLifecycleOwner) {
+            postRvAdapter?.updatePosts(it)
+            progressBar.visibility = View.GONE
+        }
         return view
     }
 
@@ -83,24 +87,18 @@ class PostsFragment : Fragment() {
 
     private fun getAllPosts(view: View) {
         progressBar.visibility = View.VISIBLE
-        model.getAllPosts { posts ->
-            this.posts = posts
-            setupPostRecyclerView(posts, view)
-            progressBar.visibility = View.GONE
-        }
+        postsViewModel.posts = model.getAllPosts()
+        setupPostRecyclerView(postsViewModel.getPosts(), view)
     }
 
     private fun getCurrUserPosts(view: View) {
         progressBar.visibility = View.VISIBLE
-        model.getCurrUserPosts { posts ->
-            this.posts = posts
-            setupPostRecyclerView(posts, view)
-            progressBar.visibility = View.GONE
-        }
+        postsViewModel.posts = model.getCurrUserPosts()
+        setupPostRecyclerView(postsViewModel.getPosts(), view)
     }
 
     private fun handlePostClicked(position: Int, view: View) {
-        val clickedPost = posts[position]
+        val clickedPost = postsViewModel.getPostByPos(position)
         clickedPost.let { post ->
             val action =
                 PostsFragmentDirections.actionPostsFragmentToPostDetailsFragment(post)
@@ -138,18 +136,8 @@ class PostsFragment : Fragment() {
         // Set the item click listener
         this.searchAutoComplete?.setOnItemClickListener { parent, _, position, _ ->
             val selectedCity = parent.adapter.getItem(position) as String
-            model.getPostsByLocation(selectedCity,
-                object : ModelFirebase.getPostsByLocationCallback {
-                    override fun onFailure() {
-                        posts = listOf()
-                        postRvAdapter?.updatePosts(posts)
-                    }
-
-                    override fun onSuccess(postsByLocation: List<Post>) {
-                        posts = postsByLocation
-                        postRvAdapter?.updatePosts(posts)
-                    }
-                })
+            postsViewModel.posts = model.getPostsByLocation(selectedCity)
+            postRvAdapter?.updatePosts(postsViewModel.getPosts())
         }
 
         this.searchAutoComplete?.addTextChangedListener(object : TextWatcher {
@@ -157,11 +145,8 @@ class PostsFragment : Fragment() {
                 if (typedString.isEmpty()) {
                     // User cleared the search, fetch all posts again
                     progressBar.visibility = View.VISIBLE
-                    model.getAllPosts {
-                        posts = it
-                        postRvAdapter?.updatePosts(posts)
-                        progressBar.visibility = View.GONE
-                    }
+                    postsViewModel.posts = model.getAllPosts()
+                    postRvAdapter?.updatePosts(postsViewModel.getPosts())
                 } else {
                     // Filter the adapter based on the input text
                     citiesAdapter?.filter?.filter(typedString)
@@ -175,12 +160,13 @@ class PostsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        reloadData()
+    }
+
+    private fun reloadData() {
         progressBar.visibility = View.VISIBLE
-        model.getAllPosts {
-            posts = it
-            postRvAdapter?.updatePosts(posts)
-            progressBar.visibility = View.GONE
-        }
+        Model.instance.refreshAllPosts()
+        progressBar.visibility = View.GONE
     }
 }
 

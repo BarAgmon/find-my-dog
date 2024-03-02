@@ -2,43 +2,47 @@ package com.idz.find_my_dog.Model
 
 import android.content.Context
 import android.widget.ImageView
-import androidx.lifecycle.MutableLiveData
-import java.util.concurrent.Executor
 import java.util.concurrent.Executors
+import android.util.Log
+import androidx.lifecycle.LiveData
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+import com.idz.find_my_dog.Dao.LocalDatabase
 
 class Model private constructor() {
     private var modelFirebase: ModelFirebase = ModelFirebase()
-//    private var loadingState = MutableLiveData<LoadingState>()
+    private var executor = Executors.newSingleThreadExecutor()
+    private val database = LocalDatabase.db;
+    private var auth: FirebaseAuth = Firebase.auth
+
     companion object {
         val instance: Model = Model()
     }
-//    init {
-//        loadingState.value = LoadingState.loaded
-//    }
-//
-//    enum class LoadingState {
-//        loading,
-//        loaded
-//    }
-    fun register(email: String, password: String, firstName: String, lastName: String,
-                 userImg: ImageView?, pathString: String, context: Context,
-                 callback: ModelFirebase.RegisterCallback) {
+
+    fun register(
+        email: String, password: String, firstName: String, lastName: String,
+        userImg: ImageView?, pathString: String, context: Context,
+        callback: ModelFirebase.RegisterCallback
+    ) {
         modelFirebase.register(email, password, context, callback)
-        modelFirebase.uploadImage( userImg, context, pathString,
-            object: ModelFirebase.UploadImageCallback{
+        modelFirebase.uploadImage(userImg, context, pathString,
+            object : ModelFirebase.UploadImageCallback {
                 override fun onSuccess(downloadUrl: String) {
                     setUserDetails(email, firstName, lastName, downloadUrl,
                         object : ModelFirebase.SetUserDetailsCallback {
-                            override fun onSuccess(){}
-                            override fun onFailure(){}
+                            override fun onSuccess() {}
+                            override fun onFailure() {}
                         })
                 }
             })
 
     }
 
-    fun login(email: String, password: String, context: Context,
-              callback: ModelFirebase.LoginCallback) {
+    fun login(
+        email: String, password: String, context: Context,
+        callback: ModelFirebase.LoginCallback
+    ) {
         modelFirebase.login(email, password, context, callback)
     }
 
@@ -50,36 +54,88 @@ class Model private constructor() {
         modelFirebase.updatePassword(password, context)
     }
 
-    fun uploadImage(userImg: ImageView?, pathString: String, context: Context,
-                    callback: ModelFirebase.UploadImageCallback) {
-        modelFirebase.uploadImage(userImg, context,pathString, callback)
+    fun uploadImage(
+        userImg: ImageView?, pathString: String, context: Context,
+        callback: ModelFirebase.UploadImageCallback
+    ) {
+        modelFirebase.uploadImage(userImg, context, pathString, callback)
     }
 
-    fun setUserDetails(email: String, firstName: String, lastName: String, imageUrl: String,
-                       callback: ModelFirebase.SetUserDetailsCallback){
+    fun setUserDetails(
+        email: String, firstName: String, lastName: String, imageUrl: String,
+        callback: ModelFirebase.SetUserDetailsCallback
+    ) {
         modelFirebase.setUserDetails(email, firstName, lastName, imageUrl, callback)
     }
 
-    fun getAllPosts(callback: (List<Post>) -> Unit) {
-        modelFirebase.getAllPosts(callback)
+    fun getAllPosts(): LiveData<List<Post>> {
+        refreshAllPosts()
+        return database.postDao().getAll()
     }
 
-    fun addPost(post: Post, callback: ModelFirebase.AddNewPostCallback){
-        modelFirebase.addPost(post,callback)
+    fun addPost(post: Post, callback: ModelFirebase.AddNewPostCallback) {
+        modelFirebase.addPost(post, object : ModelFirebase.AddNewPostCallback {
+            override fun onSuccess() {
+                refreshAllPosts()
+                callback.onSuccess()
+            }
+
+            override fun onFailure() {
+                callback.onFailure()
+            }
+        })
     }
 
-    fun setPost(newPost: Post, callback: ModelFirebase.SetPostCallback){
-        modelFirebase.setPost(newPost,callback)
-    }
-    fun getPostsByLocation(location: String, callback: ModelFirebase.getPostsByLocationCallback) {
-        modelFirebase.getPostsByLocation(location,callback)
+    fun setPost(newPost: Post, callback: ModelFirebase.SetPostCallback) {
+        modelFirebase.setPost(newPost, object : ModelFirebase.SetPostCallback {
+            override fun onSuccess() {
+                refreshAllPosts()
+                callback.onSuccess()
+            }
+
+            override fun onFailure() {
+                callback.onFailure()
+            }
+        })
     }
 
-    fun getCurrUserPosts(callback: (List<Post>) -> Unit) {
-        modelFirebase.getCurrUserPosts(callback)
+    fun getPostsByLocation(location: String): LiveData<List<Post>> {
+        return database.postDao().getPostsByLocation(location)
     }
 
-    fun deletePost(post: Post,callback: ModelFirebase.DeletePostCallback){
-        modelFirebase.deletePost(post,callback)
+    fun getCurrUserPosts(): LiveData<List<Post>> {
+        val currUserEmail = auth.currentUser!!.email!!
+        refreshAllPosts()
+        return database.postDao().getCurrUserPosts(currUserEmail)
+    }
+
+    fun deletePost(post: Post, callback: ModelFirebase.DeletePostCallback) {
+        modelFirebase.deletePost(post, callback)
+    }
+
+    fun refreshAllPosts() {
+
+        // 1. Get last local update
+        val lastUpdated: Long = Post.lastUpdated
+
+        // 2. Get all updated records from firestore since last update locally
+        modelFirebase.getAllPosts(lastUpdated) { posts ->
+            Log.i("TAG", "Firebase returned ${posts.size}, lastUpdated: $lastUpdated")
+            // 3. Insert new record to ROOM
+            executor.execute {
+                var time = lastUpdated
+                for (post in posts) {
+                    database.postDao().insert(post)
+
+                    post.lastUpdated?.let {
+                        if (time < it)
+                            time = post.lastUpdated ?: System.currentTimeMillis()
+                    }
+                }
+
+                // 4. Update local data
+                Post.lastUpdated = time
+            }
+        }
     }
 }

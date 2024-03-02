@@ -1,4 +1,5 @@
 package com.idz.find_my_dog.Modules.Posts
+
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -24,7 +25,7 @@ import android.content.DialogInterface
 import androidx.appcompat.app.AlertDialog
 
 class PostDetailsFragment : Fragment() {
-    private val args : PostDetailsFragmentArgs by navArgs()
+    private val args: PostDetailsFragmentArgs by navArgs()
     private var model: Model = Model.instance
     var dogPostImg: ImageView? = null
     var dogPostPublisherImg: ImageView? = null
@@ -46,7 +47,8 @@ class PostDetailsFragment : Fragment() {
         adaptPostData()
         return view
     }
-    private fun setupUI(view: View){
+
+    private fun setupUI(view: View) {
         this.dogPostImg = view.findViewById(R.id.post_details_dog_image)
         this.dogPostPublisherImg = view.findViewById(R.id.post_details_publisher_img)
         this.publisherName = view.findViewById(R.id.post_details_publisher_name)
@@ -66,21 +68,25 @@ class PostDetailsFragment : Fragment() {
 
             override fun onSuccess(userDetails: User) {
                 loggedInUser = userDetails
-                if(loggedInUser.email == args.post.publisherEmailId){
-                    editPostButton?.visibility=View.VISIBLE
-                    sendEmailButton?.visibility=View.GONE
-                    delPostBtn?.visibility=View.VISIBLE
-                    editPostButton?.setOnClickListener{
-                        val action = PostDetailsFragmentDirections.actionPostDetailsFragmentToEditPostDialogFragment(args.post)
-                            Navigation.findNavController(view).navigate(action)
+                if (loggedInUser.email == args.post.publisherEmailId) {
+                    editPostButton?.visibility = View.VISIBLE
+                    sendEmailButton?.visibility = View.GONE
+                    delPostBtn?.visibility = View.VISIBLE
+                    editPostButton?.setOnClickListener {
+                        val action =
+                            PostDetailsFragmentDirections.actionPostDetailsFragmentToEditPostDialogFragment(
+                                args.post
+                            )
+                        Navigation.findNavController(view).navigate(action)
                     }
                     setDeleteButtonClickListener()
-                } else{
+                } else {
                     setSendMailButtonCLickListener()
                 }
             }
         })
     }
+
     private fun setDeleteButtonClickListener() {
         this.delPostBtn?.setOnClickListener {
             val builder = AlertDialog.Builder(requireContext())
@@ -90,6 +96,7 @@ class PostDetailsFragment : Fragment() {
             builder.setPositiveButton("Delete") { _, _ ->
                 model.deletePost(args.post, object : ModelFirebase.DeletePostCallback {
                     override fun onSuccess() {
+                        model.refreshAllPosts()
                         Utils.showToast(requireContext(), "Post deleted successfully")
                         Navigation.findNavController(requireView()).popBackStack()
                     }
@@ -132,7 +139,7 @@ class PostDetailsFragment : Fragment() {
         }
     }
 
-    private fun adaptPostData(){
+    private fun adaptPostData() {
         val currPost = args.post
         this.publisherName?.text = currPost.publisher.firstName + " " + currPost.publisher.lastName
         this.publishDate?.text = currPost.date
@@ -142,6 +149,7 @@ class PostDetailsFragment : Fragment() {
         Picasso.get().load(currPost.publisher.imageUrl).into(this.dogPostPublisherImg);
         Picasso.get().load(currPost.imageURL).into(this.dogPostImg);
     }
+
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
         return if (enter) {
             AnimationUtils.loadAnimation(context, R.anim.slide_in)
