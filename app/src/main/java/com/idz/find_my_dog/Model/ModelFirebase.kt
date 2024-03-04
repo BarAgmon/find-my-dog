@@ -298,9 +298,9 @@ class ModelFirebase {
             }
     }
 
-    fun deletePost(postToDelete: Post, callback: DeletePostCallback) {
+    fun deletePost(postId: String, callback: DeletePostCallback) {
         db.collection(POSTS_COLLECTION_NAME)
-            .document(postToDelete.id)
+            .document(postId)
             .delete()
             .addOnSuccessListener { success ->
                 callback.onSuccess()

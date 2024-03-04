@@ -61,16 +61,25 @@ class PostsFragment : Fragment() {
                 }
             }
         }
+        setupAllPosts(view)
+        setupViewModelObserver()
+        return view
+    }
+
+    private fun setupAllPosts(view: View) {
         if (!args.isUserPostsOnly) {
             getAllPosts(view)
         } else {
             getCurrUserPosts(view)
         }
+    }
+
+    private fun setupViewModelObserver() {
         postsViewModel.posts.observe(viewLifecycleOwner) {
+            progressBar.visibility = View.VISIBLE
             postRvAdapter?.updatePosts(it)
             progressBar.visibility = View.GONE
         }
-        return view
     }
 
     private fun setupPostRecyclerView(posts: List<Post>, view: View) {
@@ -88,12 +97,14 @@ class PostsFragment : Fragment() {
     private fun getAllPosts(view: View) {
         progressBar.visibility = View.VISIBLE
         postsViewModel.posts = model.getAllPosts()
+        progressBar.visibility = View.GONE
         setupPostRecyclerView(postsViewModel.getPosts(), view)
     }
 
     private fun getCurrUserPosts(view: View) {
         progressBar.visibility = View.VISIBLE
         postsViewModel.posts = model.getCurrUserPosts()
+        progressBar.visibility = View.GONE
         setupPostRecyclerView(postsViewModel.getPosts(), view)
     }
 
@@ -114,7 +125,6 @@ class PostsFragment : Fragment() {
                 .load(R.drawable.load)
                 .into(progressBar)
         }
-        progressBar.visibility = View.VISIBLE
         newPostButton = view.findViewById(R.id.add_new_post)
         newPostButton?.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_postsFragment_to_newPostDialogFragment))
         postsListRv = view.findViewById(R.id.posts_list_rv)
@@ -135,9 +145,12 @@ class PostsFragment : Fragment() {
 
         // Set the item click listener
         this.searchAutoComplete?.setOnItemClickListener { parent, _, position, _ ->
+            progressBar.visibility = View.VISIBLE
             val selectedCity = parent.adapter.getItem(position) as String
             postsViewModel.posts = model.getPostsByLocation(selectedCity)
+            setupViewModelObserver()
             postRvAdapter?.updatePosts(postsViewModel.getPosts())
+            progressBar.visibility = View.GONE
         }
 
         this.searchAutoComplete?.addTextChangedListener(object : TextWatcher {
@@ -145,8 +158,10 @@ class PostsFragment : Fragment() {
                 if (typedString.isEmpty()) {
                     // User cleared the search, fetch all posts again
                     progressBar.visibility = View.VISIBLE
-                    postsViewModel.posts = model.getAllPosts()
+                    setupAllPosts(view)
+                    setupViewModelObserver()
                     postRvAdapter?.updatePosts(postsViewModel.getPosts())
+                    progressBar.visibility = View.GONE
                 } else {
                     // Filter the adapter based on the input text
                     citiesAdapter?.filter?.filter(typedString)

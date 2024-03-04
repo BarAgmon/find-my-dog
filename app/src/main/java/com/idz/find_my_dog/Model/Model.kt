@@ -103,14 +103,26 @@ class Model private constructor() {
         return database.postDao().getPostsByLocation(location)
     }
 
+    fun getPostById(id: String) : LiveData<Post> {
+        return database.postDao().getPostById(id)
+    }
     fun getCurrUserPosts(): LiveData<List<Post>> {
         val currUserEmail = auth.currentUser!!.email!!
         refreshAllPosts()
         return database.postDao().getCurrUserPosts(currUserEmail)
     }
 
-    fun deletePost(post: Post, callback: ModelFirebase.DeletePostCallback) {
-        modelFirebase.deletePost(post, callback)
+    fun deletePost(postId: String, callback: ModelFirebase.DeletePostCallback) {
+        modelFirebase.deletePost(postId, object : ModelFirebase.DeletePostCallback {
+            override fun onSuccess() {
+                database.postDao().deleteById(postId)
+                callback.onSuccess()
+            }
+
+            override fun onFailure() {
+                callback.onFailure()
+            }
+        })
     }
 
     fun refreshAllPosts() {

@@ -21,8 +21,9 @@ import com.idz.find_my_dog.Model.User
 import com.idz.find_my_dog.R
 import com.idz.find_my_dog.Utils
 import com.squareup.picasso.Picasso
-import android.content.DialogInterface
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.LiveData
+import com.idz.find_my_dog.Model.Post
 
 class PostDetailsFragment : Fragment() {
     private val args: PostDetailsFragmentArgs by navArgs()
@@ -38,13 +39,24 @@ class PostDetailsFragment : Fragment() {
     var editPostButton: FloatingActionButton? = null
     var delPostBtn: ImageView? = null
     private lateinit var loggedInUser: User
+    private lateinit var postLiveData: LiveData<Post>
+    private var currPost : Post? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_post_details, container, false)
+        postLiveData = Model.instance.getPostById(args.post.id)
+        currPost = postLiveData.value
         setupUI(view)
-        adaptPostData()
+        showAndInitEditAndDelOrSendMailButton(view,currPost)
+        adaptPostData(currPost)
+        postLiveData.observe(viewLifecycleOwner) {
+            currPost = postLiveData.value
+            showAndInitEditAndDelOrSendMailButton(view,currPost)
+            adaptPostData(currPost)
+        }
         return view
     }
 
@@ -56,11 +68,10 @@ class PostDetailsFragment : Fragment() {
         this.location = view.findViewById(R.id.post_details_location)
         this.description = view.findViewById(R.id.post_details_description)
         this.title = view.findViewById(R.id.post_details_title)
-        showAndInitEditAndDelOrSendMailButton(view)
     }
 
     // Showing edit button if the user is the post author, and send button if not.
-    private fun showAndInitEditAndDelOrSendMailButton(view: View) {
+    private fun showAndInitEditAndDelOrSendMailButton(view: View, post: Post?) {
         this.sendEmailButton = view.findViewById(R.id.post_details_send_mail)
         this.editPostButton = view.findViewById(R.id.post_details_edit_post)
         this.delPostBtn = view.findViewById(R.id.delete_post_btn)
@@ -68,20 +79,22 @@ class PostDetailsFragment : Fragment() {
 
             override fun onSuccess(userDetails: User) {
                 loggedInUser = userDetails
-                if (loggedInUser.email == args.post.publisherEmailId) {
+                if (loggedInUser.email == post?.publisherEmailId) {
                     editPostButton?.visibility = View.VISIBLE
                     sendEmailButton?.visibility = View.GONE
                     delPostBtn?.visibility = View.VISIBLE
                     editPostButton?.setOnClickListener {
-                        val action =
-                            PostDetailsFragmentDirections.actionPostDetailsFragmentToEditPostDialogFragment(
-                                args.post
-                            )
-                        Navigation.findNavController(view).navigate(action)
+                        if(post != null){
+                            val action =
+                                PostDetailsFragmentDirections.actionPostDetailsFragmentToEditPostDialogFragment(
+                                    post
+                                )
+                            Navigation.findNavController(view).navigate(action)
+                        }
                     }
                     setDeleteButtonClickListener()
                 } else {
-                    setSendMailButtonCLickListener()
+                    setSendMailButtonCLickListener(post)
                 }
             }
         })
@@ -94,7 +107,7 @@ class PostDetailsFragment : Fragment() {
             builder.setMessage("Are you sure you want to delete this post?")
 
             builder.setPositiveButton("Delete") { _, _ ->
-                model.deletePost(args.post, object : ModelFirebase.DeletePostCallback {
+                model.deletePost(args.post.id, object : ModelFirebase.DeletePostCallback {
                     override fun onSuccess() {
                         model.refreshAllPosts()
                         Utils.showToast(requireContext(), "Post deleted successfully")
@@ -117,12 +130,12 @@ class PostDetailsFragment : Fragment() {
         }
     }
 
-    private fun setSendMailButtonCLickListener() {
+    private fun setSendMailButtonCLickListener(post: Post?) {
         this.sendEmailButton?.setOnClickListener {
-            val recipient = args.post.publisherEmailId
+            val recipient = post?.publisherEmailId
             val subject = "Your post on `Find my dog` app"
-            val body = "Hi " + args.post.publisher.firstName +
-                    ", I would like to get more information about your post: " + args.post.title
+            val body = "Hi " + post?.publisher?.firstName +
+                    ", I would like to get more information about your post: " + post?.title
             val mailto = "mailto:$recipient" +
                     "?subject=${Uri.encode(subject)}" +
                     "&body=${Uri.encode(body)}"
@@ -139,15 +152,15 @@ class PostDetailsFragment : Fragment() {
         }
     }
 
-    private fun adaptPostData() {
-        val currPost = args.post
-        this.publisherName?.text = currPost.publisher.firstName + " " + currPost.publisher.lastName
-        this.publishDate?.text = currPost.date
-        this.location?.text = currPost.location
-        this.description?.text = currPost.description
-        this.title?.text = currPost.title
-        Picasso.get().load(currPost.publisher.imageUrl).into(this.dogPostPublisherImg);
-        Picasso.get().load(currPost.imageURL).into(this.dogPostImg);
+    private fun adaptPostData(post: Post?) {
+        this.publisherName?.text =
+            post?.publisher?.firstName + " " + post?.publisher?.lastName
+        this.publishDate?.text = post?.date
+        this.location?.text = post?.location
+        this.description?.text = post?.description
+        this.title?.text = post?.title
+        Picasso.get().load(post?.publisher?.imageUrl).into(this.dogPostPublisherImg);
+        Picasso.get().load(post?.imageURL).into(this.dogPostImg);
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
