@@ -21,7 +21,8 @@ data class Post(
     val location: String,
     val description: String,
     val publisherEmailId: String,
-    var lastUpdated: Long? = 0
+    var lastUpdated: Long? = 0,
+    var isDeleted: Boolean = false
 ) : Parcelable {
     constructor(
         imageURL: String,
@@ -32,7 +33,7 @@ data class Post(
         description: String,
         publisherEmailId: String
     ) : this(
-        "", imageURL, title, publisher, date, location, description, publisherEmailId, 0
+        "", imageURL, title, publisher, date, location, description, publisherEmailId, 0, false
     )
 
     companion object {
@@ -46,6 +47,7 @@ data class Post(
         const val DESCRIPTION = "description"
         const val PUBLISHER_EMAIL_ID = "publisherEmailId"
         const val LAST_UPDATED = "lastUpdated"
+        const val IS_DELETED = "isDeleted"
         private const val LAST_UPDATED_KEY_SHARED_PREFERENCES = "get_last_update"
         var lastUpdated: Long
             // The getter and setter use shared preferences
@@ -72,6 +74,7 @@ data class Post(
             val location = json[LOCATION] as? String ?: ""
             val description = json[DESCRIPTION] as? String ?: ""
             val timestamp: Timestamp = json[LAST_UPDATED] as? Timestamp ?: Timestamp(0, 0)
+            val isDeleted: Boolean = json[IS_DELETED] as? Boolean ?: false
             return Post(
                 id,
                 imageURL,
@@ -81,7 +84,8 @@ data class Post(
                 location,
                 description,
                 publisherEmailId,
-                timestamp.seconds
+                timestamp.seconds,
+                isDeleted
             )
         }
     }
@@ -96,7 +100,8 @@ data class Post(
                 LOCATION to location,
                 DESCRIPTION to description,
                 PUBLISHER_EMAIL_ID to publisherEmailId,
-                LAST_UPDATED to FieldValue.serverTimestamp()
+                LAST_UPDATED to FieldValue.serverTimestamp(),
+                IS_DELETED to isDeleted
             )
         }
 }

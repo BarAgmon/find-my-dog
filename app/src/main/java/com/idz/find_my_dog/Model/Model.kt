@@ -113,9 +113,9 @@ class Model private constructor() {
     }
 
     fun deletePost(postId: String, callback: ModelFirebase.DeletePostCallback) {
-        modelFirebase.deletePost(postId, object : ModelFirebase.DeletePostCallback {
+        modelFirebase.markPostAsDeleted(postId, object : ModelFirebase.DeletePostCallback {
             override fun onSuccess() {
-                database.postDao().deleteById(postId)
+                refreshAllPosts()
                 callback.onSuccess()
             }
 
@@ -137,8 +137,11 @@ class Model private constructor() {
             executor.execute {
                 var time = lastUpdated
                 for (post in posts) {
-                    database.postDao().insert(post)
-
+                    if(post.isDeleted) {
+                        database.postDao().deleteById(post.id)
+                    } else{
+                        database.postDao().insert(post)
+                    }
                     post.lastUpdated?.let {
                         if (time < it)
                             time = post.lastUpdated ?: System.currentTimeMillis()

@@ -109,7 +109,6 @@ class PostDetailsFragment : Fragment() {
             builder.setPositiveButton("Delete") { _, _ ->
                 model.deletePost(args.post.id, object : ModelFirebase.DeletePostCallback {
                     override fun onSuccess() {
-                        model.refreshAllPosts()
                         Utils.showToast(requireContext(), "Post deleted successfully")
                         Navigation.findNavController(requireView()).popBackStack()
                     }

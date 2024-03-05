@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
-import android.util.Log
 import android.widget.ImageView
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.Firebase
@@ -13,12 +12,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.firestoreSettings
 import com.google.firebase.firestore.memoryCacheSettings
-import com.google.firebase.firestore.persistentCacheSettings
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
@@ -298,10 +296,14 @@ class ModelFirebase {
             }
     }
 
-    fun deletePost(postId: String, callback: DeletePostCallback) {
+    fun markPostAsDeleted(postId: String, callback: DeletePostCallback) {
+        val updates = hashMapOf<String, Any>(
+            Post.IS_DELETED to true,
+            Post.LAST_UPDATED to FieldValue.serverTimestamp()
+        )
         db.collection(POSTS_COLLECTION_NAME)
             .document(postId)
-            .delete()
+            .update(updates)
             .addOnSuccessListener { success ->
                 callback.onSuccess()
             }.addOnFailureListener {
