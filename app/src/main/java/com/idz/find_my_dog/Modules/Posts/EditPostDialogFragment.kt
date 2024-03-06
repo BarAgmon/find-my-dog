@@ -11,6 +11,7 @@ import android.view.WindowManager
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.ImageView
+import android.widget.ProgressBar
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.navArgs
@@ -29,6 +30,7 @@ class EditPostDialogFragment : DialogFragment() {
     private var title: TextInputEditText? = null
     private var details: TextInputEditText? = null
     private lateinit var image: ImageView
+    private lateinit var progressBar: ProgressBar
     private lateinit var setPostButton: ImageView
     private lateinit var cancelButton: ImageView
     private var citiesAutoComplete: AutoCompleteTextView? = null
@@ -64,6 +66,7 @@ class EditPostDialogFragment : DialogFragment() {
     }
 
     private fun setupUI(view: View) {
+        this.progressBar = view.findViewById(R.id.add_edit_post_progress_bar)
         this.setPostButton = view.findViewById(R.id.send_new_post)
         this.cancelButton = view.findViewById(R.id.cancel_new_post)
         this.title = view.findViewById(R.id.new_post_title)
@@ -122,6 +125,7 @@ class EditPostDialogFragment : DialogFragment() {
     }
 
     private fun setPost(context: Context, post: Post) {
+        this.progressBar.visibility = View.VISIBLE
         if(isImageSet) {
             var pathString = Post.POST_IMAGE_LOCATION +
                     args.post.publisherEmailId + Utils.getUniqueID()
@@ -133,11 +137,13 @@ class EditPostDialogFragment : DialogFragment() {
 
                         override fun onSuccess() {
                             model.refreshAllPosts()
+                            progressBar.visibility = View.GONE
                             Utils.showToast(context, "Post set successfully")
                             dismiss()
                         }
 
                         override fun onFailure() {
+                            progressBar.visibility = View.GONE
                             Utils.showToast(context, "Failed to set post. please try again later.")
                         }
                     })
@@ -148,11 +154,13 @@ class EditPostDialogFragment : DialogFragment() {
 
                 override fun onSuccess() {
                     model.refreshAllPosts()
+                    progressBar.visibility = View.GONE
                     Utils.showToast(context, "Post set successfully")
                     dismiss()
                 }
 
                 override fun onFailure() {
+                    progressBar.visibility = View.GONE
                     Utils.showToast(context, "Failed to set post. please try again later.")
                 }
             })
