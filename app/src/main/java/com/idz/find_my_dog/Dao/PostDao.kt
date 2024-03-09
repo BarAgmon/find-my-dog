@@ -28,4 +28,7 @@ interface PostDao {
 
     @Query("SELECT * FROM Post WHERE publisherEmailId=:currUserId")
     fun getCurrUserPosts(currUserId: String): LiveData<List<Post>>
+
+    @Query("UPDATE Post SET localImagePath = :localImagePath WHERE id = :postId")
+    fun updateLocalImagePath(postId: String, localImagePath: String)
 }

@@ -9,7 +9,7 @@ import com.idz.find_my_dog.Model.User
 import com.idz.find_my_dog.Base.ApplicationGlobals
 import com.idz.find_my_dog.Convert.UserConvert
 
-@Database(entities = [Post::class, User::class], version = 1)
+@Database(entities = [Post::class, User::class], version = 2)
 @TypeConverters(UserConvert::class)
 abstract class LocalDbRepository : RoomDatabase() {
     abstract fun postDao(): PostDao

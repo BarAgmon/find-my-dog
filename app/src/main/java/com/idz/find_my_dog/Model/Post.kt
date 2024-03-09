@@ -22,7 +22,8 @@ data class Post(
     val description: String,
     val publisherEmailId: String,
     var lastUpdated: Long? = 0,
-    var isDeleted: Boolean = false
+    var isDeleted: Boolean = false,
+    var localImagePath: String? = null
 ) : Parcelable {
     constructor(
         imageURL: String,

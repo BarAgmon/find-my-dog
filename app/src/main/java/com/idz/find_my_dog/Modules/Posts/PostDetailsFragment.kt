@@ -159,7 +159,12 @@ class PostDetailsFragment : Fragment() {
         this.description?.text = post?.description
         this.title?.text = post?.title
         Picasso.get().load(post?.publisher?.imageUrl).into(this.dogPostPublisherImg);
-        Picasso.get().load(post?.imageURL).into(this.dogPostImg);
+        if(post?.localImagePath != null){
+            val filePath = "file://${post.localImagePath}"
+            Picasso.get().load(filePath).into(this.dogPostImg);
+        } else {
+            Picasso.get().load(post?.imageURL).into(this.dogPostImg);
+        }
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {

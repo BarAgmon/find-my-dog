@@ -138,19 +138,22 @@ class NewPostDialogFragment : DialogFragment() {
         model.uploadImage(image, pathString, context, object : ModelFirebase.UploadImageCallback {
             override fun onSuccess(downloadUrl: String) {
                 post.imageURL = downloadUrl
-                model.addPost(post, object : ModelFirebase.AddNewPostCallback {
+                model.saveImageLocally(downloadUrl,post.id) { localPath ->
+                    post.localImagePath = localPath
+                    model.addPost(post, object : ModelFirebase.AddNewPostCallback {
 
-                    override fun onSuccess() {
-                        progressBar.visibility = View.GONE
-                        Utils.showToast(context, "Posted successfully")
-                        dismiss()
-                    }
+                        override fun onSuccess() {
+                            progressBar.visibility = View.GONE
+                            Utils.showToast(context, "Posted successfully")
+                            dismiss()
+                        }
 
-                    override fun onFailure() {
-                        progressBar.visibility = View.GONE
-                        Utils.showToast(context, "Failed to post. Try again later.")
-                    }
-                })
+                        override fun onFailure() {
+                            progressBar.visibility = View.GONE
+                            Utils.showToast(context, "Failed to post. Try again later.")
+                        }
+                    })
+                }
             }
         })
     }

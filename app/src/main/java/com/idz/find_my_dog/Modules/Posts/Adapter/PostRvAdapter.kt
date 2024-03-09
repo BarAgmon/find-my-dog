@@ -3,6 +3,7 @@ package com.idz.find_my_dog.Modules.Posts.Adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.idz.find_my_dog.Model.Model
 import com.idz.find_my_dog.Model.Post
 import com.idz.find_my_dog.Modules.Posts.PostsFragment
 import com.idz.find_my_dog.R
@@ -10,6 +11,7 @@ import com.squareup.picasso.Picasso
 
 class PostRvAdapter(private var posts: List<Post>): RecyclerView.Adapter<PostViewHolder>() {
     var listener: PostsFragment.OnPostClickListener? = null
+    private var model: Model = Model.instance
 
     /*
     This function is called when the RecyclerView needs a new ViewHolder
@@ -45,7 +47,14 @@ class PostRvAdapter(private var posts: List<Post>): RecyclerView.Adapter<PostVie
         holder.dogPostPublishDate?.text = post.date
         holder.dogPostPublisherName?.text = post.publisher.firstName + " " + post.publisher.lastName
         Picasso.get().load(post.publisher.imageUrl).into(holder.dogPostPublisherImg);
-        Picasso.get().load(post.imageURL).into(holder.dogPostImage);
-
+        if(post.localImagePath != null){
+            val filePath = "file://${post.localImagePath}"
+            Picasso.get().load(filePath).into(holder.dogPostImage);
+        } else {
+            model.saveImageLocally(post.imageURL, post.id) { localPath ->
+                val filePath = "file://${localPath}"
+                Picasso.get().load(filePath).into(holder.dogPostImage)
+            }
+        }
     }
 }

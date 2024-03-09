@@ -1,6 +1,8 @@
 package com.idz.find_my_dog.Model
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import java.util.concurrent.Executors
 import android.util.Log
@@ -8,7 +10,14 @@ import androidx.lifecycle.LiveData
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.idz.find_my_dog.Base.ApplicationGlobals
 import com.idz.find_my_dog.Dao.LocalDatabase
+import com.squareup.picasso.Picasso
+import java.io.File
+import java.io.FileOutputStream
+import com.squareup.picasso.Target
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 class Model private constructor() {
     private var modelFirebase: ModelFirebase = ModelFirebase()
@@ -153,4 +162,36 @@ class Model private constructor() {
             }
         }
     }
+
+     fun saveImageLocally(imageUrl: String, postId: String, callback: (String) -> Unit) {
+        Picasso.get().load(imageUrl).into(object : Target {
+            var appContext = ApplicationGlobals.Globals.appContext;
+            override fun onBitmapLoaded(bitmap: Bitmap, from: Picasso.LoadedFrom) {
+                val filePath = appContext?.let { saveBitmap(it, bitmap, postId ) }
+                if (filePath != null) {
+                    //Cannot access data on main thread because it may lock other processes
+                    executor.execute {
+                        database.postDao().updateLocalImagePath(postId,filePath)
+                    }
+                    callback(filePath)
+                }
+            }
+
+            override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {}
+            override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
+        })
+    }
+
+    fun saveBitmap(context: Context, bitmap: Bitmap, postId: String): String {
+        val filesDir = context.filesDir
+        val current = System.currentTimeMillis()
+        val imageFile = File(filesDir, "$postId$current.jpg")
+
+        FileOutputStream(imageFile).use { out ->
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 85, out)
+        }
+
+        return imageFile.absolutePath
+    }
+
 }

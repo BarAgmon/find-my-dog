@@ -29,7 +29,6 @@ class PostsFragment : Fragment() {
     private var postsListRv: RecyclerView? = null
     private lateinit var progressBar: ImageView
     private var newPostButton: FloatingActionButton? = null
-    private var model: Model = Model.instance
     private val args: PostsFragmentArgs by navArgs()
     private var searchAutoComplete: AutoCompleteTextView? = null
     private var citiesAdapter: ArrayAdapter<String>? = null
@@ -96,16 +95,16 @@ class PostsFragment : Fragment() {
 
     private fun getAllPosts(view: View) {
         progressBar.visibility = View.VISIBLE
-        postsViewModel.posts = model.getAllPosts()
-        progressBar.visibility = View.GONE
+        postsViewModel.setAllPosts()
         setupPostRecyclerView(postsViewModel.getPosts(), view)
+        progressBar.visibility = View.GONE
     }
 
     private fun getCurrUserPosts(view: View) {
         progressBar.visibility = View.VISIBLE
-        postsViewModel.posts = model.getCurrUserPosts()
-        progressBar.visibility = View.GONE
+        postsViewModel.setCurrUserPosts()
         setupPostRecyclerView(postsViewModel.getPosts(), view)
+        progressBar.visibility = View.GONE
     }
 
     private fun handlePostClicked(position: Int, view: View) {
@@ -147,7 +146,7 @@ class PostsFragment : Fragment() {
         this.searchAutoComplete?.setOnItemClickListener { parent, _, position, _ ->
             progressBar.visibility = View.VISIBLE
             val selectedCity = parent.adapter.getItem(position) as String
-            postsViewModel.posts = model.getPostsByLocation(selectedCity)
+            postsViewModel.setPostsByLocation(selectedCity)
             setupViewModelObserver()
             postRvAdapter?.updatePosts(postsViewModel.getPosts())
             progressBar.visibility = View.GONE

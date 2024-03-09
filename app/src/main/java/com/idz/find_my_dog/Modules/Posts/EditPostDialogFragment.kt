@@ -132,21 +132,25 @@ class EditPostDialogFragment : DialogFragment() {
             model.uploadImage(image, pathString, context, object : ModelFirebase.UploadImageCallback {
                 override fun onSuccess(downloadUrl: String) {
                     post.imageURL = downloadUrl
+                    model.saveImageLocally(downloadUrl,post.id) { localPath ->
+                        post.localImagePath = localPath
+                        model.setPost(post, object : ModelFirebase.SetPostCallback {
 
-                    model.setPost(post, object : ModelFirebase.SetPostCallback {
 
-                        override fun onSuccess() {
-                            model.refreshAllPosts()
-                            progressBar.visibility = View.GONE
-                            Utils.showToast(context, "Post set successfully")
-                            dismiss()
-                        }
+                            override fun onSuccess() {
+                                model.refreshAllPosts()
+                                progressBar.visibility = View.GONE
+                                Utils.showToast(context, "Post set successfully")
+                                dismiss()
+                            }
 
-                        override fun onFailure() {
-                            progressBar.visibility = View.GONE
-                            Utils.showToast(context, "Failed to set post. please try again later.")
-                        }
-                    })
+                            override fun onFailure() {
+                                progressBar.visibility = View.GONE
+                                Utils.showToast(context, "Failed to set post. please try again later.")
+                            }
+                        })
+                    }
+
                 }
             })
         } else {
