@@ -11,6 +11,7 @@ import android.view.WindowManager
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.ImageView
+import android.widget.ProgressBar
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.textfield.TextInputEditText
@@ -26,6 +27,7 @@ import java.util.Date
 import java.util.Locale
 
 class NewPostDialogFragment : DialogFragment() {
+    private lateinit var progressBar: ProgressBar
     private var model: Model = Model.instance
     private var title: TextInputEditText? = null
     private var details: TextInputEditText? = null
@@ -66,6 +68,7 @@ class NewPostDialogFragment : DialogFragment() {
     }
 
     private fun setupUI(view: View) {
+        this.progressBar = view.findViewById(R.id.add_edit_post_progress_bar)
         this.sendPostButton = view.findViewById(R.id.send_new_post)
         this.cancelButton = view.findViewById(R.id.cancel_new_post)
         this.title = view.findViewById(R.id.new_post_title)
@@ -130,21 +133,27 @@ class NewPostDialogFragment : DialogFragment() {
     }
 
     private fun savePost(context: Context, post: Post) {
+        this.progressBar.visibility = View.VISIBLE
         var pathString = Post.POST_IMAGE_LOCATION + loggedInUser.email + Utils.getUniqueID()
         model.uploadImage(image, pathString, context, object : ModelFirebase.UploadImageCallback {
             override fun onSuccess(downloadUrl: String) {
                 post.imageURL = downloadUrl
-                model.addPost(post, object : ModelFirebase.AddNewPostCallback {
+                model.saveImageLocally(downloadUrl,post.id) { localPath ->
+                    post.localImagePath = localPath
+                    model.addPost(post, object : ModelFirebase.AddNewPostCallback {
 
-                    override fun onSuccess() {
-                        Utils.showToast(context, "Posted successfully")
-                        dismiss()
-                    }
+                        override fun onSuccess() {
+                            progressBar.visibility = View.GONE
+                            Utils.showToast(context, "Posted successfully")
+                            dismiss()
+                        }
 
-                    override fun onFailure() {
-                        Utils.showToast(context, "Failed to post. Try again later.")
-                    }
-                })
+                        override fun onFailure() {
+                            progressBar.visibility = View.GONE
+                            Utils.showToast(context, "Failed to post. Try again later.")
+                        }
+                    })
+                }
             }
         })
     }

@@ -4,6 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/loginFragment">
+    <action
+        android:id="@+id/action_global_postsAction"
+        app:destination="@id/postsFragment">
+        <argument
+            android:name="isUserPostsOnly"
+            app:argType="boolean" />
+    </action>
+    <action
+        android:id="@+id/action_global_userProfileAction"
+        app:destination="@id/userDetailsFragment"/>
+    <fragment
+        android:id="@+id/userDetailsFragment"
+        android:name="com.idz.find_my_dog.UserDetailsFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_user_details"/>
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.idz.find_my_dog.LoginFragment"
@@ -29,16 +44,6 @@
             app:destination="@id/loginFragment" />
     </fragment>
     <fragment
-        android:id="@+id/userDetailsFragment"
-        android:name="com.idz.find_my_dog.UserDetailsFragment"
-        android:label="Profile"
-        tools:layout="@layout/fragment_user_details"/>
-    <fragment
-        android:id="@+id/searchFragment"
-        android:name="com.idz.find_my_dog.Modules.Posts.SearchFragment"
-        android:label="Search"
-        tools:layout="@layout/search_component" />
-    <fragment
         android:id="@+id/postsFragment"
         android:name="com.idz.find_my_dog.Modules.Posts.PostsFragment"
         android:label="Explore posts"
@@ -49,9 +54,6 @@
         <action
             android:id="@+id/action_postsFragment_to_postDetailsFragment"
             app:destination="@id/postDetailsFragment" />
-        <action
-            android:id="@+id/action_postsFragment_to_searchFragment"
-            app:destination="@id/searchFragment"/>
         <action
             android:id="@+id/action_postsFragment_to_newPostDialogFragment"
             app:destination="@id/newPostDialogFragment" />
