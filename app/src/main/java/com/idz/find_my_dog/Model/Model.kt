@@ -16,8 +16,6 @@ import com.squareup.picasso.Picasso
 import java.io.File
 import java.io.FileOutputStream
 import com.squareup.picasso.Target
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 class Model private constructor() {
     private var modelFirebase: ModelFirebase = ModelFirebase()
