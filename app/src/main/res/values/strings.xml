@@ -30,4 +30,5 @@
     <string name="profile" />
     <string name="posts" />
     <string name="logout" />
+    <string name="edit_user_details_btn" />
 </resources>

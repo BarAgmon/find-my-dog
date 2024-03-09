@@ -16,6 +16,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.idz.find_my_dog.Model.Model
 import com.idz.find_my_dog.Model.ModelFirebase
 import com.idz.find_my_dog.Model.User
@@ -38,7 +39,7 @@ class UserDetailsFragment : Fragment() {
     var newpasswordBox: LinearLayout? = null
     var confirmPassword: EditText? = null
     var confirmnewpasswordBox: LinearLayout? = null
-    var edit: ImageView? = null
+    var edit: FloatingActionButton? = null
     var userImageUri: Uri? = null
     var model: Model = Model.instance
     var userImageUrl: String = ""
@@ -51,7 +52,7 @@ class UserDetailsFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_user_details, container, false)
         val context = requireActivity()
         cancle = view.findViewById(R.id.cancel)
-        edit = view.findViewById(R.id.detailes_edit_img)
+        edit = view.findViewById(R.id.user_details_edit)
         cameraImg = view.findViewById(R.id.open_camera)
         cameraBox = view.findViewById(R.id.camera_box)
         save = view.findViewById(R.id.save)
