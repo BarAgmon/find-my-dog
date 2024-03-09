@@ -57,6 +57,9 @@
         <action
             android:id="@+id/action_postsFragment_to_newPostDialogFragment"
             app:destination="@id/newPostDialogFragment" />
+        <action
+            android:id="@+id/action_postsFragment_to_loginFragment2"
+            app:destination="@id/loginFragment" />
     </fragment>
     <fragment
         android:id="@+id/postDetailsFragment"
