@@ -1,7 +1,6 @@
 package com.idz.find_my_dog
 
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -10,10 +9,12 @@ import androidx.navigation.NavHost
 import androidx.navigation.ui.NavigationUI.onNavDestinationSelected
 import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.idz.find_my_dog.Model.Model
 
 class MainActivity : AppCompatActivity() {
     var navCtrl: NavController? = null
     private lateinit var bottomNavigationView: BottomNavigationView
+    var model: Model = Model.instance
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -25,6 +26,13 @@ class MainActivity : AppCompatActivity() {
         val navHost = supportFragmentManager.findFragmentById(R.id.navHostMain) as NavHost?
         navCtrl = navHost!!.navController
         setupActionBarWithNavController(this, navCtrl!!)
+
+        if (model.isSignedIn()) {
+            val bundle = Bundle().apply {
+                putBoolean("isUserPostsOnly", false)
+            }
+            navCtrl?.navigate(R.id.action_loginFragment_to_postsFragment, bundle)
+        }
 
         navCtrl!!.addOnDestinationChangedListener { _, destination, _ ->
             // Show BottomNavigationView only in certain destinations
@@ -54,16 +62,17 @@ class MainActivity : AppCompatActivity() {
                     navCtrl?.navigate(R.id.action_global_userProfileAction)
                     true
                 }
+                R.id.navigation_logout -> {
+                    navCtrl?.navigate(R.id.action_postsFragment_to_loginFragment2)
+                    model.logout()
+                    true
+                }
 
                 else -> false
             }
         }
     }
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        super.onCreateOptionsMenu(menu)
-        menuInflater.inflate(R.menu.bottom_navigation_menu, menu)
-        return true
-    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (!super.onOptionsItemSelected(item)) {
             when (item.itemId) {

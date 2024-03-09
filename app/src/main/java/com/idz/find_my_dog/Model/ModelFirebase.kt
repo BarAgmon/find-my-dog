@@ -310,5 +310,10 @@ class ModelFirebase {
                 callback.onFailure()
             }
     }
+
+    fun isSignedIn(): Boolean {
+        val currentUser = auth.currentUser
+        return currentUser != null
+    }
 }
 

@@ -3,9 +3,8 @@ package com.idz.find_my_dog.Model
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.widget.ImageView
-import java.util.concurrent.Executors
 import android.util.Log
+import android.widget.ImageView
 import androidx.lifecycle.LiveData
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -13,9 +12,10 @@ import com.google.firebase.auth.auth
 import com.idz.find_my_dog.Base.ApplicationGlobals
 import com.idz.find_my_dog.Dao.LocalDatabase
 import com.squareup.picasso.Picasso
+import com.squareup.picasso.Target
 import java.io.File
 import java.io.FileOutputStream
-import com.squareup.picasso.Target
+import java.util.concurrent.Executors
 
 class Model private constructor() {
     private var modelFirebase: ModelFirebase = ModelFirebase()
@@ -205,6 +205,14 @@ class Model private constructor() {
 
         // Return false if the file did not exist
         return false
+    }
+
+    fun isSignedIn(): Boolean {
+        return modelFirebase.isSignedIn()
+    }
+
+    fun logout() {
+        modelFirebase.logout()
     }
 
 }
