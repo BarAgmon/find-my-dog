@@ -129,6 +129,7 @@ class EditPostDialogFragment : DialogFragment() {
         if(isImageSet) {
             var pathString = Post.POST_IMAGE_LOCATION +
                     args.post.publisherEmailId + Utils.getUniqueID()
+            model.deleteImageLocally(post.localImagePath)
             model.uploadImage(image, pathString, context, object : ModelFirebase.UploadImageCallback {
                 override fun onSuccess(downloadUrl: String) {
                     post.imageURL = downloadUrl

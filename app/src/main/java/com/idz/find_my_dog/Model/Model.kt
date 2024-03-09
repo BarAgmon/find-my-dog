@@ -146,6 +146,7 @@ class Model private constructor() {
                 for (post in posts) {
                     if(post.isDeleted) {
                         database.postDao().deleteById(post.id)
+                        deleteImageLocally(post.localImagePath)
                     } else{
                         database.postDao().insert(post)
                     }
@@ -190,6 +191,20 @@ class Model private constructor() {
         }
 
         return imageFile.absolutePath
+    }
+
+    fun deleteImageLocally(imagePath: String?): Boolean {
+        val context = ApplicationGlobals.Globals.appContext ?: throw IllegalStateException("Context is null")
+        val filesDir = context.filesDir
+        val imageFile = File(filesDir, "$imagePath.jpg")
+
+        // Check if the file exists before attempting to delete it
+        if (imageFile.exists()) {
+            return imageFile.delete()
+        }
+
+        // Return false if the file did not exist
+        return false
     }
 
 }
