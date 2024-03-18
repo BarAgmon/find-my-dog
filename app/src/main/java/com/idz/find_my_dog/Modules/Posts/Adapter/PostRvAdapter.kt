@@ -51,7 +51,7 @@ class PostRvAdapter(private var posts: List<Post>): RecyclerView.Adapter<PostVie
             val filePath = "file://${post.localImagePath}"
             Picasso.get().load(filePath).into(holder.dogPostImage);
         } else {
-            model.saveImageLocally(post.imageURL, post.id) { localPath ->
+            model.savePostImageLocally(post.imageURL, post.id) { localPath ->
                 val filePath = "file://${localPath}"
                 Picasso.get().load(filePath).into(holder.dogPostImage)
             }

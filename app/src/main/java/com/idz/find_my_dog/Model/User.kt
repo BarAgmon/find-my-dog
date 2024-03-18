@@ -11,7 +11,8 @@ data class User(
     @PrimaryKey val email: String = "",
     val firstName: String = "",
     val lastName: String = "",
-    val imageUrl: String = ""
+    val imageUrl: String = "",
+    val localImagePath: String = ""
 ) : Parcelable {
     companion object {
         const val AVATAR_LOCATION = "users_avatars/"

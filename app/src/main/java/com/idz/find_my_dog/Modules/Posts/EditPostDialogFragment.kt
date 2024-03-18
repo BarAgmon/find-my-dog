@@ -133,7 +133,7 @@ class EditPostDialogFragment : DialogFragment() {
             model.uploadImage(image, pathString, context, object : ModelFirebase.UploadImageCallback {
                 override fun onSuccess(downloadUrl: String) {
                     post.imageURL = downloadUrl
-                    model.saveImageLocally(downloadUrl,post.id) { localPath ->
+                    model.savePostImageLocally(downloadUrl,post.id) { localPath ->
                         post.localImagePath = localPath
                         model.setPost(post, object : ModelFirebase.SetPostCallback {
 

@@ -81,7 +81,15 @@ class UserDetailsFragment : Fragment() {
                     firstnameTxt?.setText(myDetails.firstName)
                     lastnameTxt?.setText(myDetails.lastName)
                     if (myDetails.imageUrl != "") {
-                        userImageUrl = myDetails.imageUrl.toString()
+                        val userLocalImage = model.getUserLocalImage(myDetails.email)
+
+                        if (userLocalImage == "") {
+                            userImageUrl = myDetails.imageUrl.toString()
+                            model.saveUserImageLocally(userImageUrl, myDetails.email)
+                        } else{
+                            userImageUrl = userLocalImage
+                        }
+
                         Picasso.get().load(userImageUrl).into(userImg)
                     }
                 }

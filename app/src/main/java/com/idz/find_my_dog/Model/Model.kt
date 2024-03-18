@@ -72,6 +72,13 @@ class Model private constructor() {
         email: String, firstName: String, lastName: String, imageUrl: String,
         callback: ModelFirebase.SetUserDetailsCallback
     ) {
+        executor.execute {
+            val user = User(email, firstName, lastName, imageUrl, "")
+            database.userDao().insert(user)
+        }
+
+        saveUserImageLocally(imageUrl, email)
+
         modelFirebase.setUserDetails(email, firstName, lastName, imageUrl, callback)
     }
 
@@ -162,7 +169,7 @@ class Model private constructor() {
         }
     }
 
-     fun saveImageLocally(imageUrl: String, postId: String, callback: (String) -> Unit) {
+     fun savePostImageLocally(imageUrl: String, postId: String, callback: (String) -> Unit) {
         Picasso.get().load(imageUrl).into(object : Target {
             var appContext = ApplicationGlobals.Globals.appContext;
             override fun onBitmapLoaded(bitmap: Bitmap, from: Picasso.LoadedFrom) {
@@ -173,6 +180,24 @@ class Model private constructor() {
                         database.postDao().updateLocalImagePath(postId,filePath)
                     }
                     callback(filePath)
+                }
+            }
+
+            override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {}
+            override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
+        })
+    }
+
+    fun saveUserImageLocally(imageUrl: String, email: String) {
+        Picasso.get().load(imageUrl).into(object : Target {
+            var appContext = ApplicationGlobals.Globals.appContext;
+            override fun onBitmapLoaded(bitmap: Bitmap, from: Picasso.LoadedFrom) {
+                val filePath = appContext?.let { saveBitmap(it, bitmap, email ) }
+                if (filePath != null) {
+                    //Cannot access data on main thread because it may lock other processes
+                    executor.execute {
+                        database.userDao().updateLocalImagePath(email, filePath)
+                    }
                 }
             }
 
@@ -215,4 +240,15 @@ class Model private constructor() {
         modelFirebase.logout()
     }
 
+    fun getUserLocalImage(email: String): String {
+        var imagePath = ""
+        executor.execute {
+            var userLiveData: LiveData<User> = database.userDao().getUserById(email)
+            if (userLiveData.value?.localImagePath != null){
+                imagePath = userLiveData.value?.localImagePath.toString()
+            }
+        }
+
+        return imagePath
+    }
 }

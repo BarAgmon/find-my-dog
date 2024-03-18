@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         navCtrl!!.addOnDestinationChangedListener { _, destination, _ ->
             // Show BottomNavigationView only in certain destinations
             when (destination.id) {
-                R.id.loginFragment, R.id.registrationFragment -> bottomNavigationView.visibility = View.GONE
+                R.id.loginFragment, R.id.registrationFragment, R.id.userDetailsFragment -> bottomNavigationView.visibility = View.GONE
                 else -> bottomNavigationView.visibility = View.VISIBLE
             }
         }
