@@ -16,6 +16,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.idz.find_my_dog.Model.Locations
@@ -35,7 +36,7 @@ class PostsFragment : Fragment() {
     private lateinit var cities: List<String>
     private var postRvAdapter: PostRvAdapter? = null
     private lateinit var postsViewModel: PostsViewModel
-
+    private lateinit var refreshPosts : SwipeRefreshLayout
     interface OnPostClickListener {
         fun onItemClick(position: Int)
     }
@@ -130,6 +131,8 @@ class PostsFragment : Fragment() {
         postsListRv = view.findViewById(R.id.posts_list_rv)
         postsListRv?.setHasFixedSize(true)
         postsListRv?.layoutManager = LinearLayoutManager(context)
+        refreshPosts = view.findViewById(R.id.refresh_posts_list)
+        refreshPosts.setOnRefreshListener { reloadData() }
     }
 
     private fun setupCitiesSearchbarArray(view: View) {
@@ -180,7 +183,9 @@ class PostsFragment : Fragment() {
 
     private fun reloadData() {
         progressBar.visibility = View.VISIBLE
+        refreshPosts.isRefreshing = true
         Model.instance.refreshAllPosts()
+        refreshPosts.isRefreshing = false
         progressBar.visibility = View.GONE
     }
 }
