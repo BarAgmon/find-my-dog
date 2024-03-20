@@ -86,12 +86,13 @@ class UserDetailsFragment : Fragment() {
 
                         if (userLocalImage == "") {
                             userImageUrl = myDetails.imageUrl.toString()
-                            model.saveUserImageLocally(userImageUrl, myDetails.email)
                         } else{
                             userImageUrl = userLocalImage
                         }
 
                         Picasso.get().load(userImageUrl).into(userImg)
+                        model.updateUserInCache(myDetails.imageUrl.toString(), myDetails.email,
+                            myDetails.firstName, myDetails.lastName)
                     }
                 }
             }
@@ -142,6 +143,8 @@ class UserDetailsFragment : Fragment() {
             } else{
                 setUserDetails(emailString, firstName, lastName, userImageUrl, context, view)
             }
+
+            model.updateUserInCache(userImageUrl, emailString, firstName, lastName)
         })
 
         cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { result: Bitmap? ->
