@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.cardview.widget.CardView
@@ -43,7 +44,7 @@ class UserDetailsFragment : Fragment() {
     var userImageUri: Uri? = null
     var model: Model = Model.instance
     var userImageUrl: String = ""
-
+    private lateinit var progressBar: ProgressBar
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -64,7 +65,7 @@ class UserDetailsFragment : Fragment() {
         userImg = view.findViewById(R.id.user_img)
         firstnameTxt = view.findViewById(R.id.firstname_txt)
         lastnameTxt = view.findViewById(R.id.lastname_txt)
-
+        progressBar = view.findViewById(R.id.edit_user_progress_bar)
         newpasswordBox?.visibility = View.GONE
         confirmnewpasswordBox?.visibility = View.GONE
         cancle?.visibility = View.GONE
@@ -128,10 +129,12 @@ class UserDetailsFragment : Fragment() {
             }
 
             if (userImg?.drawable != null) {
+                this.progressBar.visibility = View.VISIBLE
                 val pathString = User.AVATAR_LOCATION + emailString
                 model.uploadImage( userImg,pathString, context,
                     object: ModelFirebase.UploadImageCallback{
                         override fun onSuccess(downloadUrl: String) {
+                            progressBar.visibility = View.GONE
                             setUserDetails(emailString, firstName, lastName, downloadUrl,
                                 context, view)
                         }
@@ -163,13 +166,16 @@ class UserDetailsFragment : Fragment() {
 
     private fun setUserDetails(emailString: String, firstName: String, lastName: String,
                                downloadImageUrl: String, context: Context, view: View) {
+        this.progressBar.visibility = View.VISIBLE
         model.setUserDetails(emailString, firstName, lastName, downloadImageUrl,
             object : ModelFirebase.SetUserDetailsCallback {
                 override fun onSuccess(){
+                    progressBar.visibility = View.GONE
                     Utils.showToast(context, "Successfully updated user")
                     Navigation.findNavController(view).popBackStack()
                 }
                 override fun onFailure() {
+                    progressBar.visibility = View.GONE
                     Utils.showToast(context, "Failed to update user details")
                 }
             })
