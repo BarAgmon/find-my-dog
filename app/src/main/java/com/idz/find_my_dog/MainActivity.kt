@@ -26,8 +26,8 @@ class MainActivity : AppCompatActivity() {
         val navHost = supportFragmentManager.findFragmentById(R.id.navHostMain) as NavHost?
         navCtrl = navHost!!.navController
         setupActionBarWithNavController(this, navCtrl!!)
-
-        if (model.isSignedIn()) {
+        // Navigate only if the activity is not being recreated
+        if (savedInstanceState == null && model.isSignedIn()) {
             val bundle = Bundle().apply {
                 putBoolean("isUserPostsOnly", false)
             }
