@@ -13,6 +13,9 @@ import com.idz.find_my_dog.Base.ApplicationGlobals
 import com.idz.find_my_dog.Dao.LocalDatabase
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.util.concurrent.Executors
@@ -137,6 +140,27 @@ class Model private constructor() {
                 callback.onFailure()
             }
         })
+    }
+    fun updatePublisherDetails(newPublisher: User) {
+        // Update publisher details in Firebase
+        modelFirebase.updatePublisherDetails(newPublisher)
+
+        // Perform database operations in a background thread
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // Fetch the posts written by the current user
+                val usersPosts = database.postDao().getCurrUserPostsList(newPublisher.email)
+
+                // Iterate over the fetched posts to update the publisher details
+                usersPosts.forEach { post ->
+                    post.publisher = newPublisher
+                    // Update each post with the new publisher details
+                    database.postDao().update(post)
+                }
+            } catch (e: Exception) {
+                Log.e("UpdatePublisherDetails", "Error updating publisher details", e)
+            }
+        }
     }
 
     fun refreshAllPosts() {

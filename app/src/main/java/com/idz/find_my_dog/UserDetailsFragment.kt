@@ -167,9 +167,11 @@ class UserDetailsFragment : Fragment() {
     private fun setUserDetails(emailString: String, firstName: String, lastName: String,
                                downloadImageUrl: String, context: Context, view: View) {
         this.progressBar.visibility = View.VISIBLE
+        val updatedUser = User(emailString,firstName,lastName,downloadImageUrl)
         model.setUserDetails(emailString, firstName, lastName, downloadImageUrl,
             object : ModelFirebase.SetUserDetailsCallback {
                 override fun onSuccess(){
+                    model.updatePublisherDetails(updatedUser)
                     progressBar.visibility = View.GONE
                     Utils.showToast(context, "Successfully updated user")
                     Navigation.findNavController(view).popBackStack()

@@ -5,7 +5,9 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.idz.find_my_dog.Model.Post
+import com.idz.find_my_dog.Model.User
 
 
 @Dao
@@ -31,4 +33,11 @@ interface PostDao {
 
     @Query("UPDATE Post SET localImagePath = :localImagePath WHERE id = :postId")
     fun updateLocalImagePath(postId: String, localImagePath: String)
+
+    @Update
+    fun update(post: Post)
+
+    @Query("SELECT * FROM Post WHERE publisherEmailId = :email")
+    suspend fun getCurrUserPostsList(email: String): List<Post>
+
 }

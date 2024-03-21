@@ -16,7 +16,7 @@ data class Post(
     @PrimaryKey var id: String = "",
     var imageURL: String,
     val title: String,
-    val publisher: User,
+    var publisher: User,
     val date: String,
     val location: String,
     val description: String,

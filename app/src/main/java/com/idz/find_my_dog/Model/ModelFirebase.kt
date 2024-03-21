@@ -233,6 +233,20 @@ class ModelFirebase {
         }
     }
 
+    fun updatePublisherDetails(newPublisher: User) {
+        // Reference to the posts collection
+        val postsRef = db.collection(POSTS_COLLECTION_NAME)
+        // Query to find all posts by the publisher
+        postsRef.whereEqualTo("publisherEmailId", newPublisher.email)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    // For each document, update the publisher field
+                    val postRef = postsRef.document(document.id)
+                    postRef.update("publisher", newPublisher.json)
+                }
+            }
+    }
     fun getPost(callback: (List<Post>) -> Unit, postId: String) {
         val currUserEmail = auth.currentUser!!.email
         db.collection(POSTS_COLLECTION_NAME).whereEqualTo(Post.ID, postId)
