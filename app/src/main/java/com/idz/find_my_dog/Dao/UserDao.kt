@@ -13,6 +13,10 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg user: User)
 
+    @Query("DELETE FROM User")
+    fun deleteUsers()
+
+
     @Query("SELECT * FROM User WHERE email =:email")
     fun getUserById(email: String): LiveData<User>
     @Query("UPDATE User SET localImagePath = :localImagePath WHERE email = :email")

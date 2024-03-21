@@ -75,13 +75,7 @@ class Model private constructor() {
         email: String, firstName: String, lastName: String, imageUrl: String,
         callback: ModelFirebase.SetUserDetailsCallback
     ) {
-        executor.execute {
-            val user = User(email, firstName, lastName, imageUrl, "")
-            database.userDao().insert(user)
-        }
-
-        saveUserImageLocally(imageUrl, email)
-
+        updateUserInCache(imageUrl, email, firstName, lastName)
         modelFirebase.setUserDetails(email, firstName, lastName, imageUrl, callback)
     }
 
@@ -212,7 +206,7 @@ class Model private constructor() {
         })
     }
 
-    fun saveUserImageLocally(imageUrl: String, email: String) {
+    fun updateUserInCache(imageUrl: String, email: String, firstName: String, lastName: String) {
         Picasso.get().load(imageUrl).into(object : Target {
             var appContext = ApplicationGlobals.Globals.appContext;
             override fun onBitmapLoaded(bitmap: Bitmap, from: Picasso.LoadedFrom) {
@@ -220,7 +214,9 @@ class Model private constructor() {
                 if (filePath != null) {
                     //Cannot access data on main thread because it may lock other processes
                     executor.execute {
-                        database.userDao().updateLocalImagePath(email, filePath)
+                        val user = User(email, firstName, lastName, imageUrl, filePath)
+                        database.userDao().deleteUsers()
+                        database.userDao().insert(user)
                     }
                 }
             }
@@ -262,6 +258,9 @@ class Model private constructor() {
 
     fun logout() {
         modelFirebase.logout()
+        executor.execute {
+            database.userDao().deleteUsers()
+        }
     }
 
     fun getUserLocalImage(email: String): String {
