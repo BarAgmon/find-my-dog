@@ -57,7 +57,26 @@ class Model private constructor() {
     }
 
     fun getUserDetails(callback: ModelFirebase.UserDetailsCallback) {
-        modelFirebase.getUserDetails(callback)
+        var email = modelFirebase.getLoggedInUserEmail()
+        var user = User()
+        executor.execute {
+            if (email != null) {
+                val userLiveData: LiveData<User> = database.userDao().getUserById(email)
+                if (userLiveData.value?.email != null && userLiveData.value?.firstName != null &&
+                    userLiveData.value?.lastName != null && userLiveData.value?.imageUrl != null
+                ) {
+                    user = User(
+                        userLiveData.value!!.email, userLiveData.value?.firstName!!,
+                        userLiveData.value?.lastName!!, userLiveData.value?.imageUrl!!
+                    )
+                    callback.onSuccess(user)
+                    return@execute
+                }
+            }
+        }
+        if (user.email == "") {
+            modelFirebase.getUserDetails(callback)
+        }
     }
 
     fun updatePassword(password: String, context: Context) {
